@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% load staticfiles %}
+{% load humanize %}
+
+<script src='{% static "js/ext/jquery-1.8.1.min.js" %}'></script>
+<script src="{% static "js/ext/d3.v3.js" %}"></script>
+<script src="{% static "js/ext/rickshaw.js" %}"></script>
+<script src="{% static "js/ext/jquery-ui-1.8.23.custom.min.js" %}"></script>
+<script src="{% static "js/ext/moment.js" %}"></script>
+<link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}"/>
+<link rel="stylesheet" href="{% static "css/rickshaw.css" %}"/>
+<link rel="stylesheet" href="{% static "css/jquery-ui.css" %}"/>
+
+
+
+</head>
+
+<body>
+	<div class='row-fluid'>
+		<div class = 'span4'>
+		<h1>{{ employee.identity.name }}</h1>
+		<h3>Total Salary:</h3>
+		<h2>${{ employee.proposed_total_salary|intcomma }}0 </h2>
+		</div>
+	
+		<div class='span8'>
+			
+			
+			{% for detail in employee.employeedetail_set.all %}
+				
+				<h4>{{ detail.position.title }}</h4>
+				<h4>${{ detail.proposed_salary|intcomma }}0</h4>
+
+			{% endfor %}
+			
+		</div>
+
+	</div>
+
+</body>

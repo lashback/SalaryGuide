@@ -1,0 +1,460 @@
+body {
+	width : 100% ;
+	height : 100% ;
+	margin : 0 ;
+	font-family : "adelle", Georgia, serif ;
+}
+
+section {
+	display : block ;
+}
+
+#seizures-map {
+	position : absolute ;
+	top : 0 ;
+	left : 0 ;
+	width : 100% ;
+	height : 65% ;
+	z-index : 50 ;
+}
+
+#seizures-map-canvas {
+	height : 100% ;
+}
+
+.station-icon,
+.port-icon {
+	pointer-events : none ;
+}	
+
+.station-icon div,
+.port-icon div {
+	position : relative ;
+	/*background-color : green ;
+	cursor : crosshair ;*/
+	/*pointer-events : none;*/
+	top : -100px ;
+	left : -100px ;
+}
+
+.station-icon svg,
+.port-icon svg {
+	background-color : none ;
+	fill : none ;
+	pointer-events : none ;
+	z-index : -1 ;
+}
+
+.raphchart {
+	/*visibility : hidden ;*/
+	fill : #000 ;
+}
+
+.station-icon svg circle,
+.port-icon svg circle {
+	font-size : 11px ;
+	/*pointer-events : auto ;*/
+	pointer-events : visibleFill ;
+	z-index : 99 ;
+}
+
+#branding {
+	position : absolute ;
+	top : 10px ;
+	right : 10px ;
+	width : 20% ;
+	/*max-width: 500px ;*/
+	z-index : 101 ;
+	/*text-align : right ;*/
+}
+
+#branding img.logo {
+	width : 100% ;
+}
+
+ul#social {
+	position : absolute ;
+	list-style-type : none ;
+	top : 20% ;
+	right : 10px ;
+	z-index : 101 ;
+	/*max-width : 24px ;*/
+	margin : 0 ;
+	padding : 0 ;
+}
+
+#social li {
+/*	text-align : right ;*/
+	padding : 2px 0 ;
+}
+
+/*#social li div {
+	text-align: left ;
+}*/
+
+/*#social img {
+	width : 100%;
+}*/
+
+/*#branding ul {
+	list-style-type : none ;
+	list-style-position : inside ;
+	padding : 0 ;
+	margin : 0 ;
+	text-align : right ;
+}*/
+
+#inset #explainer ul {
+	list-style-type : square ;
+	list-style-position : inside ;
+	padding : 0 ;
+	margin : 0.3em 0 0 0 ;
+}
+
+#explainer ul li {
+	float : left;
+	margin-right : 0.6em ;
+}
+
+#inset {
+	position : absolute ;
+	bottom : 0 ;
+	left : 0 ;
+	background-color : #FFF ;
+	border-top : 1px solid #333 ;
+	width : 100% ;
+	height : 35% ;
+	padding : 0 ;
+	z-index : 100 ;
+	vertical-align : top ;
+}
+
+#inset-inner {
+}
+
+#inset #pulldown {
+	display : block ;
+	width : 170px ;
+	/*height : 0 ;*/
+	position : absolute ;
+	top : -16px ;
+	left : 50% ;
+	margin-left : -85px ;
+	text-align : center ;
+	cursor : pointer ;
+	z-index : 10 ;
+}
+
+#inset p {
+	font-size : 0.9em ;
+	padding : 0 ;
+	margin : 1em 0 0 0 ;
+}
+
+#inset h1 {
+	font-size : 1.2em ;
+	line-height : 1.2em ;
+	padding : 0 ;
+	margin : 0 ;
+}
+
+#inset ul {
+	list-style-type : none ;
+	list-style-position : inside;
+	padding : 0 ;
+}
+
+#inset ul li {
+	
+}
+
+#inset .agency-display {
+	position : absolute ;
+	display : inline-block ;
+	zoom : 1 ;
+	*display: inline;
+	top : -6.5em ;
+	left : 10px ;
+	color : #FFF ;
+	font-size : 18px ;
+	font-family : Helvetica, serif ;
+	text-shadow : 1px 1px 1px #333 ;
+}
+
+#inset .data-display {
+	position : absolute ;
+	display : inline-block ;
+	zoom : 1 ;
+	*display: inline;
+	top : -3em ;
+	left : 10px ;
+	color : #FFF ;
+	font-size : 30px ;
+	font-weight : 700 ;
+	font-family : Helvetica, serif ;
+	text-shadow : 1px 1px 1px #333 ;
+}
+
+#drug-control {
+	position : relative ;
+	text-align : center ;
+	margin : 0 auto ;
+}
+
+#drug-control button {
+	font-family : Helvetica, sans-serif ;
+	width : 19.5% ;
+	font-size : 1em ;
+	margin : 0.5em 0 ;
+	padding : 0.5em 0 ;
+	text-transform : uppercase ;
+}
+
+#explainer {
+	display : inline-block ;
+	zoom : 1 ;
+	*display: inline;	
+	width : 40% ;
+	padding : 1% ;
+	vertical-align : top ;
+}
+
+#main-chart {
+	display : inline-block ;
+	zoom : 1 ;
+	*display: inline;
+	width : 55% ;
+	padding : 1% ;
+	vertical-align : top ;
+}
+
+#controls {
+	position : relative ;
+	display : inline-block ;
+	zoom : 1 ;
+	*display: inline;	
+	margin-left : 0.8em ;
+	font-size : 13px ;
+	vertical-align : top ;
+}
+
+#controls form {
+	margin-bottom: 1em ;
+}
+
+#controls input[type="radio"] {
+	margin-top: -3px ;
+	margin-right: 3px ;
+}
+
+#agency-control ul,
+#year-control ul {
+	margin: 0 ;
+}
+
+#year-control button {
+	position : absolute ;
+	bottom : -1.6em ;
+	width : 42% ;
+	height : 1.6em ;
+}
+
+button.slider-back {
+	left : 0 ;
+}
+
+button.slider-forward {
+	right : 0 ;
+}
+
+
+#slider-and-chart {
+	display : inline-block ;
+	zoom : 1 ;
+	*display: inline;
+	width : 78% ;
+	margin : 0 ;
+}
+
+.year-slider {
+	width : 100% ;
+	margin : 0 auto ;
+}
+
+#upper-slider .ui-state-default,
+#upper-slider .ui-state-default,
+#upper-slider .ui-widget-header,
+#upper-slider .ui-state-default,
+#slider-and-chart .ui-state-default,
+#slider-and-chart .ui-state-default,
+#slider-and-chart .ui-widget-header,
+#slider-and-chart .ui-state-default {
+	/*background : #f6f6f6 url(ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png) 50% 50% repeat-x*/
+	background-image: none ;
+	background-color : rgb(242,136,23) ;
+}
+
+#upper-slider {
+	display : block ;
+	width : 30% ;
+	/*height : 0 ;*/
+	position : absolute ;
+	top : -2em ;
+	left : 10px ;
+	/*margin-left : -85px ;*/
+	text-align : center ;
+	z-index : 10 ;
+
+}
+
+#upper-slider .year-slider {
+	display : inline-block ;
+	zoom : 1 ;
+	*display: inline;
+	width : 65% ;
+	margin : 0 0.5em ;
+}
+
+#upper-slider button {
+	position : relative ;
+	width : 12% ;
+	margin : 0 ;
+	vertical-align : top ;
+	height : 2em ;
+	top : -0.3em ;
+	/*font-size : 9px ;*/
+}
+
+#upper-slider button.slider-back {
+	margin-left : -10px;
+}
+
+/*slider labels*/
+.year-slider .ui-slider-handle {
+	text-decoration : none ;
+}
+
+.year-slider .ui-slider-handle:before {
+	position : relative ;
+	display : block ;
+	width : 100px ;
+	height : 20px ;
+	top : 22px ;
+	left : -40px ;
+	font-family : Helvetica, sans-serif ;
+	font-size : 18px ;
+	text-align : center ;
+	color : #666 ;
+	content : attr(title) ;
+	font-weight : bold ;
+	background-color : #FFF ;
+}
+
+#upper-slider .year-slider .ui-slider-handle:before {
+	top : -22px ;
+	font-family : Helvetica, sans-serif ;
+	font-size : 18px ;
+	text-align : center ;
+	/*color : #999 ;*/
+	background-color : transparent ;
+	text-shadow : 1px 1px 1px #333 ;
+}
+
+a.ui-slider-handle:focus {
+	outline : none ;
+}
+/*end slider labels*/
+
+.chart-canvas {
+	position : relative ;
+	width : 100% ;
+	height : 9em ;
+	background-color : #EEE ;
+}
+
+.chart-canvas .bar {
+	background-color : #1d2755 ;
+	margin : 0 4px ;
+}
+
+.chart-canvas .bar-mini {
+	background-color : #1d2755 ;
+	margin : 0 ;
+}
+
+.chart-canvas .marijuana {
+	background-color : #67B56A ;
+}
+
+#inset .marijuana-text,
+.marijuana-text .ui-slider-handle:before {
+	color : #67B56A ;
+}
+
+.chart-canvas .cocaine {
+	background-color : #8DB3DB ;
+}
+
+#inset .cocaine-text,
+.cocaine-text .ui-slider-handle:before {
+	color : #8DB3DB ;
+}
+
+.chart-canvas .heroin {
+	background-color : #DFD95E ;
+}
+
+#inset .heroin-text,
+.heroin-text .ui-slider-handle:before {
+	color : #DFD95E ;
+}
+
+.chart-canvas .methamphetamine {
+	background-color : #AB66A9 ;
+}
+
+#inset .methamphetamine-text,
+.methamphetamine-text .ui-slider-handle:before {
+	color : #AB66A9 ;
+}
+
+.chart-canvas .other {
+	background-color : #818481 ;
+}
+
+#inset .other-text,
+.other-text .ui-slider-handle:before {
+	color : #818481 ;
+}
+
+.chart-canvas .barcolumn {
+	position : absolute ;
+	height : 95% ;
+	margin : 1% 0 ;
+}
+
+.chart-canvas .bar-label {
+	position : absolute ;
+	bottom : 0 ;
+	width : 100% ;
+	text-align : center ;
+	color : #CCC ;
+	pointer-events : none ;
+}
+
+body .modal {
+	top : 20% ;
+}
+
+body .modal.fade.in {
+	top : 20% ;
+}
+
+#location-stats strong {
+	font-family : "myriad-pro-condensed-1","myriad-pro-condensed-2";
+	font-size : 2.5em;
+	line-height : 1em;
+	color : #666;
+	float : left ;
+	margin-right : 0.5em;
+}
