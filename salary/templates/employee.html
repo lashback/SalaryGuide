@@ -3,7 +3,7 @@
 <head>
 {% load staticfiles %}
 {% load humanize %}
-
+<title>{{employee.identity.name}}</title>
 <script src='{% static "js/ext/jquery-1.8.1.min.js" %}'></script>
 <script src="{% static "js/ext/d3.v3.js" %}"></script>
 <script src="{% static "js/ext/rickshaw.js" %}"></script>
@@ -13,27 +13,46 @@
 <link rel="stylesheet" href="{% static "css/rickshaw.css" %}"/>
 <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}"/>
 
+<style>
 
+#jobs {
+	padding:5em;
+	background-color: #333;
+	color: #fff;
+}
+
+</style>
 
 </head>
 
 <body>
 	<div class='row-fluid'>
-		<div class = 'span4'>
+		<div class = 'span7'>
 		<h1>{{ employee.identity.name }}</h1>
-		<h3>Total Salary:</h3>
-		<h2>${{ employee.proposed_total_salary|intcomma }}0 </h2>
+		<h3>Total Salary: ${{ employee.proposed_total_salary|intcomma }}0 </h3>
+		<p>{{ employee.identity.name }} earns more than {{ employee.department_percentile|floatformat }}% of their colleagues in the department <strong>{{ primary.department.name }}</strong></p>
+		<p>... and {{ employee.college_percentile | floatformat }}% of their colleagues in the college <strong>{{ primary.college.name }}</strong></p>
+		{% comment %} and THIS is where I put a graph that highlights where they lie on the salary totem {% endcomment %}
+
+		<h5>In {{ employee.year }}, {{ employee.identity.name }} earned more than {{ employee.total_percentile|floatformat }}% of all salaried University of Illinois employees. </h5>
 		</div>
-	
-		<div class='span8'>
-			
+		
+		<div class='span5'>
+		<div id ='jobs'>	
 			
 			{% for detail in employee.employeedetail_set.all %}
 				
-				<h4>{{ detail.position.title }}</h4>
-				<h4>${{ detail.proposed_salary|intcomma }}0</h4>
+				<h3>Title: {{ detail.position.title }}</h3>
+				<h3>Salary: ${{ detail.proposed_salary|intcomma }}0</h3>
+				<br>
+				<h4>College: {{detail.college.name}} </h4>
+				<h4>Department: {{detail.department.name}} </h4>
+				<h4>Organization: {{detail.organization.name }} </h4>
+				<br>
 
 			{% endfor %}
+
+		</div>
 			
 		</div>
 

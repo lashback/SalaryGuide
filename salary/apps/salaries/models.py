@@ -99,9 +99,13 @@ class Employee(models.Model):
 	####This takes for fucking ever. Go get coffee. Take a shower. Run a few miles. Take another shower.####
 	
 	def save_stats(self):
-		#self.department_percentile = self.get_department_percentile()
-		#self.position_percentile = self.get_position_percentile()
-		#self.college_percentile = self.get_college_percentile()
+		print "getting department rank"
+		self.department_percentile = self.get_department_percentile()
+		print "getting position rank"
+		self.position_percentile = self.get_position_percentile()
+		print "getting college rank"
+		self.college_percentile = self.get_college_percentile()
+		print "getting total rank"
 		self.total_percentile = self.get_total_percentile()
 
 
@@ -180,8 +184,6 @@ class Employee(models.Model):
 				all_salaries.append(int(member.proposed_total_salary))
 
 		my_salary = self.proposed_total_salary
-		print my_salary
-		print self.identity.name
 		
 		percentile_thing = stats.percentileofscore(all_salaries, my_salary, kind='strict')
 		print percentile_thing
@@ -197,7 +199,7 @@ class Employee(models.Model):
 	#get a list of questions that we need answered. Find the fields we'll need to create in order to do so.
 	
 	def __unicode__(self):
-		return self.identity
+		return self.identity.name
 
 class EmployeeDetail(models.Model):
 	identity = models.ForeignKey(Employee)
@@ -215,7 +217,7 @@ class EmployeeDetail(models.Model):
 	proposed_salary = models.FloatField(default = 0)
 
 	def __unicode__(self):
-		name = self.identity.identity.name
-		return name
+		return self.identity.identity.name
+		
 	class Meta:
 		ordering = ['-proposed_salary']
