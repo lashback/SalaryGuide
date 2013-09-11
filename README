@@ -1,0 +1,38 @@
+----------------------------------------------------------------------------------------------
+--------------Super Fancy Django App for Tracking U of I Salaries (and beyond)!---------------
+----------------------------------------------------------------------------------------------
+
+It's gonna be rough getting up and running. 
+
+create a python virtualenv named 'salary'
+workon salary.
+
+run 'pip install -r requirements.txt'
+
+create a db:
+
+createdb salary -T template_postgis -O salary
+
+I use South for dev database migrations, because I hate writing postgres and I love having freetime. In any case, you will too:
+python manage.py syncdb
+python manage.py schemamigration salaries --initial
+python manage.py migrate
+
+load the data in the /salary directory:
+python manage.py import_csv
+python manage.py import_budgets
+and then go into the shell to save all of the percentiles/whatever I've come up since I've last updated this README.
+
+python manage.py shell
+>>>from apps.salaries.models import *
+#for each of the {{classes}}, you're going to want to do
+>>>for e in {{class}}.objects.all():
+>>>    e.save()
+
+This will take a very long time. I am very sorry. It runs once, get over it, I wrote it for my own speed, not the computers. It is very bad. See you in two hours.
+-------------------------
+-------------------------
+-------------------------
+You're back!
+Okay. Go develop. Push well and often.
+Love, Nathaniel.
