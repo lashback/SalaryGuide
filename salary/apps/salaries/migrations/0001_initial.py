@@ -46,6 +46,7 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('department', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['salaries.Department'])),
+            ('total_budget', self.gf('django.db.models.fields.IntegerField')(default=0)),
         ))
         db.send_create_signal(u'salaries', ['Organization'])
 
@@ -72,6 +73,10 @@ class Migration(SchemaMigration):
             ('proposed_total_FTE', self.gf('django.db.models.fields.FloatField')(default=0)),
             ('present_total_salary', self.gf('django.db.models.fields.FloatField')(default=0)),
             ('proposed_total_salary', self.gf('django.db.models.fields.FloatField')(default=0)),
+            ('department_percentile', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
+            ('position_percentile', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
+            ('college_percentile', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
+            ('total_percentile', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
         ))
         db.send_create_signal(u'salaries', ['Employee'])
 
@@ -144,12 +149,16 @@ class Migration(SchemaMigration):
         },
         u'salaries.employee': {
             'Meta': {'object_name': 'Employee'},
+            'college_percentile': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'department_percentile': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'identity': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['salaries.EmployeeSuper']"}),
+            'position_percentile': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'present_total_FTE': ('django.db.models.fields.FloatField', [], {'default': '0'}),
             'present_total_salary': ('django.db.models.fields.FloatField', [], {'default': '0'}),
             'proposed_total_FTE': ('django.db.models.fields.FloatField', [], {'default': '0'}),
             'proposed_total_salary': ('django.db.models.fields.FloatField', [], {'default': '0'}),
+            'total_percentile': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'year': ('django.db.models.fields.IntegerField', [], {'default': '0'})
         },
         u'salaries.employeedetail': {
@@ -180,7 +189,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Organization'},
             'department': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['salaries.Department']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'total_budget': ('django.db.models.fields.IntegerField', [], {'default': '0'})
         },
         u'salaries.position': {
             'Meta': {'object_name': 'Position'},

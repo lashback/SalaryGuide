@@ -2,9 +2,11 @@ from django.db import models
 #from django import forms #i don't actually know what this does and I don't ahve internet so just going with it.
 #from numpy import percentile
 from scipy import stats
+
+import numpy
+
 import math
 import functools
-
 
 
 class Institution(models.Model):
@@ -22,23 +24,104 @@ class Campus(models.Model):
 class College(models.Model):
 	name = models.CharField(max_length = 255)
 	campus = models.ForeignKey(Campus)
+	campus_salary_average_percentile = models.FloatField(null = True, blank = True)
+	median_salary = models.FloatField(null = True, blank=True)
+	average_salary = models.FloatField(null=True, blank = True)
+	max_salary = models.FloatField(null=True, blank = True)
+	full_time_employees = models.FloatField(null = True, blank = True)
+	individual_employees = models.IntegerField(null = True, blank = True)
+	salaries_sum = models.IntegerField(null=True, blank = True)
+
+
+
 	#code = models.CharField(max_length = 5)
+
 	total_budget = models.IntegerField(default = 0)
 	def __unicode__(self):
 		return self.name
 	def save(self, *args, **kwargs):
-      #self.sector = self.get_sector()
+		#self.median_salary = self.get_median_salary()
+		self.salaries_sum = self.get_sum()
 		super(College, self).save(*args, **kwargs)
+
+	def get_median_salary(self):
+		members = EmployeeDetail.objects.filter(college = self)
+		all_salaries = []
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+		median = numpy.median(all_salaries)
+		print median
+		print self.name
+		return median
+	def get_max_salary(self):
+		members = EmployeeDetail.objects.filter(college = self)
+		all_salaries = []
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+
+		maximum = numpy.maximum(all_salaries)
+		return maximum
+
+	def get_full_time(self):
+		members = EmployeeDetail.objects.filter(college = self)
+		all_salaries = []
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+
+		maximum = numpy.sum(all_hours)
+		return maximum
+
+
+	def get_keyed_salaries(self):
+		members = EmployeeDetail.objects.filter(college = self)
+		all_salaries = {}
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries[member.identity.id] = []
+				all_salaries[member.identity.id].append(int(member.identity.proposed_total_salary))
+		return all_salaries
+
+	def get_salaries(self):
+		members = EmployeeDetail.objects.filter(college = self)
+		all_salaries = []
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+		return all_salaries
+
+	def get_sum(self):
+		members = EmployeeDetail.objects.filter(college = self)
+		college_salaries = []
+		for member in members:
+			college_salaries.append(int(member.proposed_salary))
+
+		sum = numpy.sum(college_salaries)
+		return sum
+
+
 
 class Department(models.Model):
 	name = models.CharField(max_length=255)
 	college = models.ForeignKey(College)
 	total_budget = models.IntegerField(default = 0)
+	
 	def __unicode__(self):
 		return self.name
 
 	def save(self, *args, **kwargs):
 		super(Department, self).save(*args, **kwargs)
+
+	def get_salaries(self):
+		members = EmployeeDetail.objects.filter(college = self)
+		all_salaries = {}
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries[member.identity.name]
+				all_salaries.append(int(member.identity.proposed_total_salary))
+		return all_salaries
 
 class Organization(models.Model):
 	name = models.CharField(max_length=255)
@@ -70,8 +153,12 @@ class Position(models.Model):
 #The grey book lists the person every fucking time. OH GOD. I have to work in the superclasses. 
 #fuck. me. 
 
+class Mug(models.Model):
+	image = models.ImageField(upload_to = 'img')
+
 class EmployeeSuper(models.Model):
 	name = models.CharField(max_length = 255)
+	mug = models.ForeignKey(Mug, null = True, blank = True)
 	def __unicode__(self):
 		return self.name
 
@@ -85,12 +172,13 @@ class Employee(models.Model):
 	present_total_salary = models.FloatField(default = 0)
 	proposed_total_salary = models.FloatField(default = 0)
 
-
-
 	department_percentile = models.FloatField(blank = True, null = True)
 	position_percentile = models.FloatField(blank = True, null = True)
 	college_percentile = models.FloatField(blank = True, null = True)
 	total_percentile = models.FloatField(blank = True, null = True)
+	department_position_percentile = models.FloatField(blank = True, null = True)
+	college_position_percentile = models.FloatField(blank = True, null = True)
+
 
 	# python manage.py shell
 	# import...
@@ -98,20 +186,61 @@ class Employee(models.Model):
 	#	e.save()
 	####This takes for fucking ever. Go get coffee. Take a shower. Run a few miles. Take another shower.####
 	
-	def save_stats(self):
-		print "getting department rank"
-		self.department_percentile = self.get_department_percentile()
-		print "getting position rank"
-		self.position_percentile = self.get_position_percentile()
-		print "getting college rank"
-		self.college_percentile = self.get_college_percentile()
-		print "getting total rank"
-		self.total_percentile = self.get_total_percentile()
+#	def save_stats(self):
+#		print "getting department rank"
+#		self.department_percentile = self.get_department_percentile()
+#		print "getting position rank"
+#		self.position_percentile = self.get_position_percentile()
+#		print "getting college rank"
+#		self.college_percentile = self.get_college_percentile()
+#		print "getting total rank"
+#		self.total_percentile = self.get_total_percentile()
 
 
 	def save(self, **kwargs):
-		self.save_stats()
+		#print "getting department rank"
+		#self.department_percentile = self.get_department_percentile()
+		#print self.identity.name
+		#print "getting position rank"
+		#self.position_percentile = self.get_position_percentile()
+		#print "getting college rank"
+		#self.college_percentile = self.get_college_percentile()
+		#print "getting total rank"
+		#self.total_percentile = self.get_total_pecentile()
+		primary_empl = self.get_primary_employment()
+		thang = None
+		self.college_position_percentile = self.get_rank_according_to_things(primary_empl.college, thang, primary_empl.position)
+		thing = None
+		self.department_position_percentile = self.get_rank_according_to_things(thing, primary_empl.department, primary_empl.position)
+
 		super(self.__class__, self).save(**kwargs)
+
+
+
+	def get_rank_according_to_things(self, college = None, department = None, position = None):
+		kwargs = {}
+		if college:
+			kwargs['college'] = college
+		if department:
+			kwargs['department'] = department
+		if position:
+			kwargs['position'] = position
+
+		members = EmployeeDetail.objects.filter(**kwargs)
+
+		all_salaries = []
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+
+		self_salary = self.proposed_total_salary
+		rank = stats.percentileofscore(all_salaries, self_salary, kind='strict')
+		print self.id
+		print rank
+
+		return rank
+
+
 
 	def get_primary_employment(self):
 		employeedetails = EmployeeDetail.objects.filter(identity = self)
@@ -124,6 +253,7 @@ class Employee(models.Model):
 		return k
 
 	def get_position_percentile(self):
+		
 		all_salaries = []
 
 		primary_employment = self.get_primary_employment()
@@ -134,8 +264,6 @@ class Employee(models.Model):
 				all_salaries.append(int(member.identity.proposed_total_salary))
 
 		my_salary = self.proposed_total_salary
-		print my_salary
-		print all_salaries
 		percentile_thing = stats.percentileofscore(all_salaries, my_salary, kind='strict')
 		print percentile_thing
 		return percentile_thing
@@ -151,8 +279,6 @@ class Employee(models.Model):
 				all_salaries.append(int(member.identity.proposed_total_salary))
 
 		my_salary = self.proposed_total_salary
-		print my_salary
-		print all_salaries
 		percentile_thing = stats.percentileofscore(all_salaries, my_salary, kind='strict')
 		print percentile_thing
 		return percentile_thing
@@ -168,8 +294,6 @@ class Employee(models.Model):
 				all_salaries.append(int(member.identity.proposed_total_salary))
 
 		my_salary = self.proposed_total_salary
-		print my_salary
-		print all_salaries
 		percentile_thing = stats.percentileofscore(all_salaries, my_salary, kind='strict')
 		print percentile_thing
 		return percentile_thing
@@ -207,8 +331,8 @@ class EmployeeDetail(models.Model):
 	
 	college = models.ForeignKey(College)
 	department = models.ForeignKey(Department)
-	organization = models.ForeignKey(Organization)
 
+	employee_class = models.CharField(max_length = 5, null = True, blank = True)
 	tenure = models.CharField(max_length = 5, blank = True)
 	present_FTE = models.FloatField(default = 0)
 	proposed_FTE = models.FloatField(default = 0)
@@ -221,3 +345,4 @@ class EmployeeDetail(models.Model):
 		
 	class Meta:
 		ordering = ['-proposed_salary']
+

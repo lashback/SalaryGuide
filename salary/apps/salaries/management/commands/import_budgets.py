@@ -26,7 +26,7 @@ class Command(BaseCommand):
 				try: 
 					#budget = budget * 1000
 					if code[-7:] == 'XXX-XXX':
-						for c in College.objects.filter(total_budget=0):
+						for c in College.objects.filter(campus.name = 'UIUC' ):
 							if c.name == h[2].strip():
 
 								c.total_budget = budget

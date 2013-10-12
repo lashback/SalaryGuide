@@ -17,6 +17,7 @@ class Command(BaseCommand):
 		handle.next()
 
 		for index, h in enumerate(handle):
+			
 			university_import, university_created = Institution.objects.get_or_create(
 				name = 'University of Illinois'
 				)

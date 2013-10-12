@@ -6,18 +6,33 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
-    # Simple login for securing site on Heroku
-    (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'admin/login.html'}),
+#API
+from tastypie.api import Api
+from apps.salaries.api import CollegeResource
 
+v1_api = Api(api_name='v1')
+v1_api.register(CollegeResource())
+
+urlpatterns = patterns('',
+    
     # Admin
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', admin.site.urls),
 
+    #haystax
+    (r'^search/', include('haystack.urls')),
+
     # Project URLs go here
 
+    (r'^api/', include(v1_api.urls)),
+    url(r'^landing/', 'apps.salaries.views.landing',name = 'landing'),
 	url(r'^employee/(?P<employee_id>\d+)/$', 'apps.salaries.views.employee', name = 'employee'),
-	url(r'^college/(?P<college_id>\d+)/$', 'apps.salaries.views.college', name = 'college')
+	url(r'^college/(?P<college_id>\d+)/$', 'apps.salaries.views.college', name = 'college'),
+	url(r'^department/(?P<department_id>\d+)/$', 'apps.salaries.views.department', name = 'department'),
+	url(r'^position/(?P<position_id>\d+)/$', 'apps.salaries.views.position', name = 'position'),
+    url(r'^campus/(?P<campus_id>\d+)/$', 'apps.salaries.views.campus', name = 'campus'),
+	url(r'^bubbles/', 'apps.salaries.views.bubbles', name = 'bubbles')
+
 
 
 )
