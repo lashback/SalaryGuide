@@ -4,6 +4,7 @@ from apps.salaries.models import *
 
 
 class EmployeeAdmin(admin.ModelAdmin):
+	search_fields = ['identity__name']
 	list_display = ['identity','proposed_total_salary','year']
 
 class EmployeeDetailAdmin(admin.ModelAdmin):
@@ -23,7 +24,16 @@ class DepartmentAdmin(admin.ModelAdmin):
 class PositionAdmin(admin.ModelAdmin):
 	list_display = ['title']
 
+class EmployeeSuperAdmin(admin.ModelAdmin):
+	search_fields = ['name', 'first_name']
+	list_display = ['name', 'first_name', 'last_name', 'middle']
 
+class MugAdmin(admin.ModelAdmin):
+	raw_id_fields = ('identity',)
+	
+
+admin.site.register(Mug, MugAdmin)
+admin.site.register(EmployeeSuper, EmployeeSuperAdmin)
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(College, CollegeAdmin)
 admin.site.register(Department, DepartmentAdmin)

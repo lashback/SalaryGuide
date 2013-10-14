@@ -18,3 +18,4 @@ django-haystack
 #pysolr
 #trying elasticserach
 pyelasticsearch
+nameparser

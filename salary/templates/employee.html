@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% load staticfiles %}
 
 
 
@@ -20,6 +21,7 @@
 <div class='row-fluid'>
 	
 	<div class='span2'>
+
 	<input 
 		{% comment %}
 		    <form method="get" action=".">
@@ -72,6 +74,11 @@
 
 	<div class='span8'>
 
+	{% if employee.identity.mug_set.all %}
+		{% for mug in employee.identity.mug_set.all %}
+			<img src="{{ MEDIA_URL }}{{ mug.image.url }}"/>
+		{% endfor %}
+	{% endif %}
 	<h1>{{employee.identity.name}}</h1>
 
 	</div>
