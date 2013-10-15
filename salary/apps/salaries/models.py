@@ -161,14 +161,14 @@ class EmployeeSuper(models.Model):
 	name = models.CharField(max_length = 50)
 	full_name = models.CharField(max_length = 50, null = True)
 	first_name = models.CharField(max_length=30, null = True)
-	last_name = models.CharField(max_length=30, null = True)
+	last_name = models.CharField(max_length=35, null = True)
 	middle = models.CharField(max_length=30, null = True)
 #	mug = models.ForeignKey(Mug, null = True, blank = True)
 	
 	def save(self, *args, **kwargs):
 		parsed_name = HumanName(self.name)
 		print parsed_name
-		full_name = parsed_name
+		self.full_name = parsed_name
 		self.first_name = parsed_name.first
 		print self.first_name
 		self.last_name = parsed_name.last

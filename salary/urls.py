@@ -4,6 +4,7 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
+from haystack.views import SearchView, search_view_factory
 
 admin.autodiscover()
 
@@ -22,7 +23,7 @@ urlpatterns = patterns('',
 
     #haystax
     (r'^search/', include('haystack.urls')),
-
+    url(r'^search/autocomplete/$', 'apps.salaries.views.autocomplete'),
     # Project URLs go here
 
     (r'^api/', include(v1_api.urls)),
@@ -32,8 +33,8 @@ urlpatterns = patterns('',
 	url(r'^department/(?P<department_id>\d+)/$', 'apps.salaries.views.department', name = 'department'),
 	url(r'^position/(?P<position_id>\d+)/$', 'apps.salaries.views.position', name = 'position'),
     url(r'^campus/(?P<campus_id>\d+)/$', 'apps.salaries.views.campus', name = 'campus'),
-	url(r'^bubbles/', 'apps.salaries.views.bubbles', name = 'bubbles')
-
+	url(r'^bubbles/', 'apps.salaries.views.bubbles', name = 'bubbles'),
+#    url(r'^/search/autocomplete/', 'apps.salaries.views.autocomplete')
 
 
 )

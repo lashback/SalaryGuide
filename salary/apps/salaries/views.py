@@ -18,6 +18,12 @@ def landing(request):
 	campuses = Campus.objects.all()
 	return render_to_response('landing.html', {'campuses':campuses})
 
+def employeeSuper(request):
+	p = get_object_or_404(EmployeeSuper, pk = employeesuper_id)
+	#dis is where all the histogram magic is going to happen. I am stressed just thinking about it.
+
+	
+
 def campus(request, campus_id):
 	p = get_object_or_404(Campus, pk = campus_id)
 	colleges = College.objects.filter(campus = p)
@@ -62,12 +68,13 @@ def bubbles(request):
 	return render_to_response('bubbles.html', {'colleges':colleges})
 
 
+
+
 def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(content_auto=request.GET.get('q', ''))[:5]
     suggestions = [result.title for result in sqs]
-	#plz don't hack me. 
-	#c = {}
-	#c.update(csrf(request))
+    # Make sure you return a JSON object, not a bare list.
+    # Otherwise, you could be vulnerable to an XSS attack.
     the_data = json.dumps({
         'results': suggestions
     })
