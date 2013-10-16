@@ -157,7 +157,6 @@ class Position(models.Model):
 
 
 class EmployeeSuper(models.Model):
-	
 	name = models.CharField(max_length = 50)
 	full_name = models.CharField(max_length = 50, null = True)
 	first_name = models.CharField(max_length=30, null = True)
@@ -175,7 +174,6 @@ class EmployeeSuper(models.Model):
 		self.middle = parsed_name.middle
 
 		super(EmployeeSuper, self).save(*args, **kwargs)
-
 
 	def __unicode__(self):
 		return "%s %s %s" % (self.first_name, self.middle, self.last_name, )

@@ -21,8 +21,8 @@ def landing(request):
 def employeeSuper(request):
 	p = get_object_or_404(EmployeeSuper, pk = employeesuper_id)
 	#dis is where all the histogram magic is going to happen. I am stressed just thinking about it.
+	return render_to_response('employee', {'employee':p})
 
-	
 
 def campus(request, campus_id):
 	p = get_object_or_404(Campus, pk = campus_id)
@@ -68,13 +68,10 @@ def bubbles(request):
 	return render_to_response('bubbles.html', {'colleges':colleges})
 
 
-
-
 def autocomplete(request):
-    sqs = SearchQuerySet().autocomplete(content_auto=request.GET.get('q', ''))[:5]
-    suggestions = [result.title for result in sqs]
-    # Make sure you return a JSON object, not a bare list.
-    # Otherwise, you could be vulnerable to an XSS attack.
+    sqs = SearchQuerySet().autocomplete(content_auto=request.GET.get('q', ''))[:6]
+    suggestions = [result.full_name for result in sqs]
+    #this is annoying. But because hackers... (they exist? idk.)
     the_data = json.dumps({
         'results': suggestions
     })
