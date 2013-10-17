@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+
+
+
+{% block title %}
+
+	{{employee.name}}
+
+{% endblock %}
+
+
+{% block wrapper_css %}
+<style>
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<script src='{% static "js/autocomplete.js" %}'></script>
+
+
+<div class='row-fluid'>
+	
+	<div class='span2'>
+
+	<div id="search">
+	<form method="post" action="/search/" class="autocomplete-me">
+    <input type="text" id="search_bar" name="q"><button type="submit"><img src="{% static "img/magnifyingglass.png" %}" alt="Search" height="40" width="40"/></button>
+    
+  </form>
+	</div>
+
+
+
+	</div>
+
+	<div class='span8'>
+
+	{% if employee.mug_set.all %}
+		{% for mug in employee.mug_set.all %}
+			<img src="{{ MEDIA_URL }}{{ mug.image.url }}"/>
+		{% endfor %}
+	{% endif %}
+	<h1>{{employee.name}}</h1>
+
+	</div>
+
+	<div class='span2'>
+	<h3>{{employee.get_primary_employment.college.name}} </h3>
+	</div>
+
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+      window.autocomplete = new Autocomplete({
+        form_selector: '.autocomplete-me'
+      })
+      window.autocomplete.setup()
+    })
+
+  </script>
+
+
+{% endblock %}
