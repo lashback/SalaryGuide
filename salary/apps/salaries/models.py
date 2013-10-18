@@ -164,6 +164,16 @@ class EmployeeSuper(models.Model):
 	middle = models.CharField(max_length=30, null = True)
 #	mug = models.ForeignKey(Mug, null = True, blank = True)
 	
+	def get_primary_employment(self):
+		employeedetails = EmployeeDetail.objects.filter(identity__identity = self)
+		
+		k = employeedetails[0]
+
+		for employee in employeedetails:
+			if employee.proposed_salary > k.proposed_salary and employee.identity.year > k.identity.year:
+				k = employee
+		return k
+
 	def save(self, *args, **kwargs):
 		parsed_name = HumanName(self.name)
 		print parsed_name

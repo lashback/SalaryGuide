@@ -28,7 +28,7 @@ urlpatterns = patterns('',
 
     (r'^api/', include(v1_api.urls)),
     url(r'^landing/', 'apps.salaries.views.landing',name = 'landing'),
-	url(r'^employee/(?P<employee_id>\d+)/$', 'apps.salaries.views.employee', name = 'employee'),
+	url(r'^employee/(?P<employeeSuper_id>\d+)/$', 'apps.salaries.views.employeeSuper', name = 'employee'),
 	url(r'^college/(?P<college_id>\d+)/$', 'apps.salaries.views.college', name = 'college'),
 	url(r'^department/(?P<department_id>\d+)/$', 'apps.salaries.views.department', name = 'department'),
 	url(r'^position/(?P<position_id>\d+)/$', 'apps.salaries.views.position', name = 'position'),

@@ -20,7 +20,9 @@ def landing(request):
 
 def employeeSuper(request):
 	p = get_object_or_404(EmployeeSuper, pk = employeesuper_id)
+
 	#dis is where all the histogram magic is going to happen. I am stressed just thinking about it.
+
 	return render_to_response('employee', {'employee':p})
 
 
@@ -30,15 +32,15 @@ def campus(request, campus_id):
 	chancellor = EmployeeDetail.objects.filter(position__title = 'CHANCELLOR')
 	return render_to_response('campus.html', {'campus':p, 'colleges':colleges, 'chancellor':chancellor})
 
-def employee(request, employee_id):
-	p = get_object_or_404(Employee, pk = employee_id)
+def employeeSuper(request, employeeSuper_id):
+	p = get_object_or_404(EmployeeSuper, pk = employeeSuper_id)
 	primary = p.get_primary_employment()
 
 #	college_employees = Employee.objects.filter(primary.employment
 #	college_employee_array = []
 #	for e in employees
 
-	return render_to_response('employee.html', {'employee':p, 'primary':primary})
+	return render_to_response('employeeSuper.html', {'employee':p, 'primary':primary})
 
 def college(request, college_id):
 	p = get_object_or_404(College, pk = college_id)
@@ -70,9 +72,12 @@ def bubbles(request):
 
 def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(content_auto=request.GET.get('q', ''))[:6]
+    
     suggestions = [result.full_name for result in sqs]
-    #this is annoying. But because hackers... (they exist? idk.)
+    suggestion_ids = [result.id for result in sqs]
     the_data = json.dumps({
-        'results': suggestions
+        'results': suggestions,
+        'ids':suggestion_ids
+
     })
     return HttpResponse(the_data, content_type='application/json')

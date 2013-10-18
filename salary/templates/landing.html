@@ -18,6 +18,10 @@ body {
 	background-color:#04BFBF;
 
 }
+a{
+
+  color:#333
+}
 input {
     width:100%;
     height:3em;
@@ -26,11 +30,38 @@ input {
     
 }
 
-button{
-  background-color:transparent;
+button
+{  background-color:transparent;
   border:none;
-  :inline;
 }
+html, body {
+        height: 100vh;
+      }
+
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100vh;
+  margin: 0 auto -10vh;
+}
+
+
+#push, #footer {
+        height: 10vh;
+      }
+#footer {
+        background-color: #333;
+        color:#eee;
+      }
+@media (max-width: 767px) {
+      #footer {
+      margin-left: -20px;
+      margin-right: -20px;
+      padding-left: 20px;
+      padding-right: 20px;
+      }
+}
+
 
 
 </style>
@@ -45,7 +76,7 @@ button{
 {% load static %}
 <script src='{% static "js/autocomplete.js" %}'></script>
 <!-- <img src='{% static "img/magnifyingglass.png" %}'/> -->
-
+<div id='wrap'>
 <div class='row-fluid'>
 	<div class='span12'>
 	<img src='{% static "img/salaryguidemasthead-01.png" %}'/>
@@ -76,9 +107,18 @@ button{
 
   </script>
 </div>
-</body>
-</html>
+<!--
+    <div id="push"></div>
     
+
+    <div id="footer">
+      <div class="container">
+        <p class="muted credit">Data and application developed by</p>
+        <p>Nathaniel Lash</p>
+      </div>
+    </div>
+    -->
+</div>
 
 
 {% endblock %}
