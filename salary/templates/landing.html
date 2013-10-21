@@ -173,7 +173,7 @@ html, body {
  $('.typeahead').typeahead({
     name: 'employees',
     remote: '/search/autocomplete/?q=%QUERY',
-    template: '<p>{{name}}</p>',
+    template: '<p><a href="../employee/{{id}}">{{name}}</a></p>',
     engine:Hogan
   });
  {% endverbatim %}

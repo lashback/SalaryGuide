@@ -27,7 +27,7 @@ def campus(request, campus_id):
 def employeeSuper(request, employeeSuper_id):
 	p = get_object_or_404(EmployeeSuper, pk = employeeSuper_id)
 	primary = p.get_primary_employment()
-
+	
 #	college_employees = Employee.objects.filter(primary.employment
 #	college_employee_array = []
 #	for e in employees
