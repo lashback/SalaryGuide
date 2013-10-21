@@ -2,7 +2,6 @@ from django import forms
 from haystack.forms import ModelSearchForm
 
 class AutocompleteModelSearch(ModelSearchForm):
-
 	def search(self):
 		if not self.is_valid():
 			return self.no_query_found()

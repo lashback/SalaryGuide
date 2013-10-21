@@ -18,14 +18,6 @@ def landing(request):
 	campuses = Campus.objects.all()
 	return render_to_response('landing.html', {'campuses':campuses})
 
-def employeeSuper(request):
-	p = get_object_or_404(EmployeeSuper, pk = employeesuper_id)
-
-	#dis is where all the histogram magic is going to happen. I am stressed just thinking about it.
-
-	return render_to_response('employee', {'employee':p})
-
-
 def campus(request, campus_id):
 	p = get_object_or_404(Campus, pk = campus_id)
 	colleges = College.objects.filter(campus = p)
@@ -71,13 +63,33 @@ def bubbles(request):
 
 
 def autocomplete(request):
-    sqs = SearchQuerySet().autocomplete(content_auto=request.GET.get('q', ''))[:6]
-    
-    suggestions = [result.full_name for result in sqs]
-    suggestion_ids = [result.id for result in sqs]
-    the_data = json.dumps({
-        'results': suggestions,
-        'ids':suggestion_ids
+	sqs = SearchQuerySet().autocomplete(content_auto=request.GET.get('q', ''))[:6]
+	##### Return these fuckers with keys #####
+	#suggestions = []
 
-    })
-    return HttpResponse(the_data, content_type='application/json')
+
+	data = []
+
+	for result in sqs:
+		data.append({
+			'name': str(result.full_name), 
+			'id': result.object.id
+			}
+			)
+
+
+	full_response =  json.dumps(data) 
+
+#    	suggestions.append([{'name': str(result.full_name), 'id':result.object.id},])
+    
+ #   the_data = suggestions
+##### Don't know. #####
+	#suggestions = [result.full_name for result in sqs]
+	#suggestion_ids = [result.object.id for result in sqs]
+	#data = json.dumps({
+	#	'results': suggestions,
+		#'ids':suggestion_ids
+
+	#})
+	
+	return HttpResponse(full_response, content_type='application/json')

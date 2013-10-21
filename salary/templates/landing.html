@@ -15,6 +15,7 @@ Salary Guide | The Daily Illini
 <style>
 
 body {
+
 	background-color:#04BFBF;
 
 }
@@ -24,14 +25,12 @@ a{
 }
 input {
     width:100%;
-    height:3em;
-    border:1px solid #fff;
-    background-image:url({% static "img/magnifyingglass.png" %});
     
+    border:1px solid #fff;
+        
 }
 
-button
-{  background-color:transparent;
+button{  background-color:transparent;
   border:none;
 }
 html, body {
@@ -63,6 +62,72 @@ html, body {
 }
 
 
+.typeahead,
+.tt-query,
+.tt-hint {
+  width: 396px;
+  height: 30px;
+  padding: 8px 12px;
+  font-size: 24px;
+  line-height: 30px;
+  border: 2px solid #ccc;
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  outline: none;
+}
+
+.typeahead {
+  background-color: #fff;
+}
+
+.typeahead:focus {
+  border: 2px solid #0097cf;
+}
+
+.tt-query {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.tt-hint {
+  color: #999
+}
+
+.tt-dropdown-menu {
+  width: 422px;
+  margin-top: 12px;
+  padding: 8px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+          box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+  padding: 3px 20px;
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.tt-suggestion.tt-is-under-cursor {
+  color: #fff;
+  background-color: #0097cf;
+
+}
+
+.tt-suggestion p {
+  margin: 0;
+}
+
+
+
 
 </style>
 
@@ -74,7 +139,7 @@ html, body {
 {% block content %}
 
 {% load static %}
-<script src='{% static "js/autocomplete.js" %}'></script>
+<!-- <script src='{% static "js/autocomplete.js" %}'></script> -->
 <!-- <img src='{% static "img/magnifyingglass.png" %}'/> -->
 <div id='wrap'>
 <div class='row-fluid'>
@@ -89,21 +154,41 @@ html, body {
 <div id='searchform'>
 
 <form method="post" action="/search/" class="autocomplete-me">
-    <input type="text" id="search_bar" name="q"><button type="submit"><img src="{% static "img/magnifyingglass.png" %}" alt="Search" height="40" width="40"/></button>
+    <div class='rowfluid'>
     
+      <div class='span10'>
+        <input type="text"  placeholder='Search for employees' autocomplete="off" height='100' class="typeahead" name="q">
+      </div>
+      <div class='span2'>
+        <button type="submit"><img src="{% static "img/magnifyingglass.png" %}" alt="Search" height="40" width="40"/></button>
+      </div>
+    </div>
   </form>
 </div>
 </div>
 
 
 <script type="text/javascript">
-
+{% verbatim %}
+ $('.typeahead').typeahead({
+    name: 'employees',
+    remote: '/search/autocomplete/?q=%QUERY',
+    template: '<p>{{name}}</p>',
+    engine:Hogan
+  });
+ {% endverbatim %}
+/*
     $(document).ready(function() {
+     
+
+
       window.autocomplete = new Autocomplete({
         form_selector: '.autocomplete-me'
       })
       window.autocomplete.setup()
-    })
+  }) */
+ 
+
 
   </script>
 </div>

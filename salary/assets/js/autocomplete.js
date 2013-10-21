@@ -1,7 +1,7 @@
     var Autocomplete = function(options) {
       this.form_selector = options.form_selector
       this.url = options.url || '/search/autocomplete/'
-      this.delay = parseInt(options.delay || 300)
+      this.delay = parseInt(options.delay || 100)
       this.minimum_length = parseInt(options.minimum_length || 3)
       this.form_elem = null
       this.query_box = null
@@ -41,19 +41,27 @@
           'q': query
         }
       , success: function(data) {
+          console.log(data)
+          //$('.typeahead').typeahead(source:data.results);
           self.show_results(data)
+          
+            
         }
       })
     }
 
+
     Autocomplete.prototype.show_results = function(data) {
+
       // Remove any existing results.
-      $('.ac-results').remove()
+     $('.ac-results').remove()
 
-      var results = data.results || []
+      var results = data.ids || []
+          
       var results_wrapper = $('<div class="ac-results"></div>')
-      var base_elem = $('<div class="result-wrapper"><a href="#" class="ac-result"></a></div>')
-
+      var base_elem = $('<div class="result-wrapper"><a href="{{}}" class="ac-result"></a></div>')
+      
+      
       if(results.length > 0) {
         for(var res_offset in results) {
           var elem = base_elem.clone()
@@ -65,17 +73,10 @@
       }
       else {
         var elem = base_elem.clone()
-        elem.text("No results found.")
+        elem.text("No employees found.")
         results_wrapper.append(elem)
-      }
-
+      } 
       this.query_box.after(results_wrapper)
     }
 
-    $(document).ready(function() {
-      window.autocomplete = new Autocomplete({
-        form_selector: '.autocomplete-me'
-      })
-      window.autocomplete.setup()
-    })
 

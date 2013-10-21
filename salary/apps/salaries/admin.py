@@ -9,7 +9,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 class EmployeeDetailAdmin(admin.ModelAdmin):
 	list_display = ['__unicode__', 'position', 'college', 'proposed_salary']
-	search_fields = ['identity__name']
+	search_fields = ['identity__identity__name']
 
 
 class CollegeAdmin(admin.ModelAdmin):

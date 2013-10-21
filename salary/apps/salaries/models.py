@@ -17,8 +17,9 @@ class Institution(models.Model):
 		return self.name
 
 class Campus(models.Model):
-	name = models.CharField(max_length = 50)
+	name = models.CharField(max_length = 35)
 	institution = models.ForeignKey(Institution)
+	#full_name = models.CharField(max_length=40, null=True, blank=True)
 	def __unicode__(self):
 		return self.name
 
@@ -124,6 +125,8 @@ class Department(models.Model):
 				all_salaries.append(int(member.identity.proposed_total_salary))
 		return all_salaries
 
+#	def get_averages(self):
+
 class Organization(models.Model):
 	name = models.CharField(max_length=255)
 	department = models.ForeignKey(Department)
@@ -216,49 +219,42 @@ class Employee(models.Model):
 	# for e in Employee.objects.all():
 	#	e.save()
 	####This takes for fucking ever. Go get coffee. Take a shower. Run a few miles. Take another shower.####
-	
-#	def save_stats(self):
-#		print "getting department rank"
-#		self.department_percentile = self.get_department_percentile()
-#		print "getting position rank"
-#		self.position_percentile = self.get_position_percentile()
-#		print "getting college rank"
-#		self.college_percentile = self.get_college_percentile()
-#		print "getting total rank"
-#		self.total_percentile = self.get_total_percentile()
 
+	def save_stats(self):
+		primary = self.get_primary_employment()
+		if not self.college_position_percentile:
+			self.department_position_percentile = self.get_rank_according_to_things(year=self.year, department = primary.department, position = primary.position)
+			self.college_position_percentile = self.get_rank_according_to_things(year = self.year, college = primary.college, position = primary.position)
+		if not self.department_percentile:
+			self.department_percentile = self.get_rank_according_to_things(year = self.year, department = primary.department)	
+			self.position_percentile = self.get_rank_according_to_things(year = self.year, position = primary.position)
+			self.college_percentile = self.get_rank_according_to_things(year = self.year, college = primary.college)
+		if not self.total_percentile:
+			self.total_percentile = self.get_rank_according_to_things(year =  self.year, campus = primary.college.campus)	
+		self.save()
 
 	def save(self, **kwargs):
-		#print "getting department rank"
-		#self.department_percentile = self.get_department_percentile()
-		#print self.identity.name
-		#print "getting position rank"
-		#self.position_percentile = self.get_position_percentile()
-		#print "getting college rank"
-		#self.college_percentile = self.get_college_percentile()
-		#print "getting total rank"
-		#self.total_percentile = self.get_total_pecentile()
-	#	primary_empl = self.get_primary_employment()
-	#	thang = None
-	#	self.college_position_percentile = self.get_rank_according_to_things(primary_empl.college, thang, primary_empl.position)
-	#	thing = None
-	#	self.department_position_percentile = self.get_rank_according_to_things(thing, primary_empl.department, primary_empl.position)
-
 		super(self.__class__, self).save(**kwargs)
 
 
 
-	def get_rank_according_to_things(self, college = None, department = None, position = None):
+	def get_rank_according_to_things(self, year = None, college = None, department = None, position = None, institution = None, campus=None):
 		kwargs = {}
+		if institution:
+			kwargs['college__campus__institution'] = institution
+		if campus:
+			kwargs['college__campus'] = campus
 		if college:
 			kwargs['college'] = college
 		if department:
 			kwargs['department'] = department
 		if position:
 			kwargs['position'] = position
+		if year:
+			kwargs['identity__year'] = year
 
 		members = EmployeeDetail.objects.filter(**kwargs)
-
+		
 		all_salaries = []
 		for member in members:
 			if member.identity.proposed_total_salary > 0:
@@ -266,6 +262,7 @@ class Employee(models.Model):
 
 		self_salary = self.proposed_total_salary
 		rank = stats.percentileofscore(all_salaries, self_salary, kind='strict')
+		print self.identity
 		print self.id
 		print rank
 
@@ -370,10 +367,14 @@ class EmployeeDetail(models.Model):
 
 	present_salary = models.FloatField(default = 0)
 	proposed_salary = models.FloatField(default = 0)
-
+	is_primary = models.NullBooleanField(null=True, blank = True)
 	def __unicode__(self):
 		return self.identity.identity.name
 		
 	class Meta:
 		ordering = ['-proposed_salary']
-
+	
+	def save(self, *args, **kwargs):
+		#self.median_salary = self.get_median_salary()
+	
+		super(EmployeeDetail, self).save(*args, **kwargs)
