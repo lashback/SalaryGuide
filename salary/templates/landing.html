@@ -173,6 +173,7 @@ html, body {
  $('.typeahead').typeahead({
     name: 'employees',
     remote: '/search/autocomplete/?q=%QUERY',
+    //THIS IS A BAD WAY TO LINK BUT I DON'T CARE.
     template: '<p><a href="../employee/{{id}}">{{name}}</a></p>',
     engine:Hogan
   });
