@@ -26,13 +26,16 @@ def campus(request, campus_id):
 
 def employeeSuper(request, employeeSuper_id):
 	p = get_object_or_404(EmployeeSuper, pk = employeeSuper_id)
-	primary = p.get_primary_employment()
 	
-#	college_employees = Employee.objects.filter(primary.employment
-#	college_employee_array = []
-#	for e in employees
+	primary = p.get_primary_employment()
 
-	return render_to_response('employeeSuper.html', {'employee':p, 'primary':primary})
+
+	college_employees = EmployeeDetail.objects.filter(college=primary.college, identity__year = 2013, is_primary = True) 
+	college_salaries = []
+	for e in college_employees:
+		college_salaries.append(e.identity.proposed_total_salary)
+
+	return render_to_response('employeeSuper.html', {'employee':p, 'primary':primary, 'college_salaries':college_salaries})
 
 def college(request, college_id):
 	p = get_object_or_404(College, pk = college_id)
@@ -75,7 +78,8 @@ def autocomplete(request):
 
 		data.append({
 			'name': str(result.full_name), 
-			'id': result.object.id
+			'id': result.object.id,
+			
 		#	'position': 
 			}
 			)

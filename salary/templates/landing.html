@@ -24,6 +24,10 @@ a{
   color:#333
 }
 
+.input-container {
+    background: url(http://i.stack.imgur.com/0Vlc5.png) no-repeat;
+}
+
 button{  background-color:transparent;
   border:none;
 }
@@ -148,11 +152,10 @@ html, body {
 <form method="post" action="/search/" class="autocomplete-me">
     <div class='rowfluid'>
     
-      <div class='span10'>
+      <div class='span12'>
+      <div class='input-container'>
         <input type="text"  placeholder='Search for employees' autocomplete="off" height='100' class="typeahead" name="q">
       </div>
-      <div class='span2'>
-        <button type="submit"><img src="{% static "img/magnifyingglass.png" %}" alt="Search" height="40" width="40"/></button>
       </div>
     </div>
   </form>
@@ -171,6 +174,15 @@ html, body {
     template:'<p><a href="../employee/{{id}}">{{name}}</a></p>',
     engine:Hogan
   });
+
+ $(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
  {% endverbatim %}
 /*
     $(document).ready(function() {
