@@ -34,6 +34,8 @@ urlpatterns = patterns('',
 	url(r'^position/(?P<position_id>\d+)/$', 'apps.salaries.views.position', name = 'position'),
     url(r'^campus/(?P<campus_id>\d+)/$', 'apps.salaries.views.campus', name = 'campus'),
 	url(r'^bubbles/', 'apps.salaries.views.bubbles', name = 'bubbles'),
+    url(r'^deans/', 'apps.salaries.views.deans', name = 'deans'),
+
 #    url(r'^/search/autocomplete/', 'apps.salaries.views.autocomplete')
 
 

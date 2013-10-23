@@ -19,3 +19,4 @@ django-haystack
 #trying elasticserach
 pyelasticsearch
 nameparser
+django-mathfilters

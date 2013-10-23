@@ -10,6 +10,14 @@ import math
 import functools
 
 
+'''
+We might be able to fucking do anything. 
+
+Find chaired professorships because they're 0-hour appts. 
+If one job is prof, another is the chair. But the chairs aren't necessarily paid
+
+
+'''
 class Institution(models.Model):
 #this is the university. allows for inclusion of other schools if you're interested.
 	name = models.CharField(max_length = 50)
@@ -25,99 +33,54 @@ class Campus(models.Model):
 
 class College(models.Model):
 	name = models.CharField(max_length = 50)
+	total_budget = models.IntegerField(blank = True, null = True)
 	campus = models.ForeignKey(Campus)
-	campus_salary_average_percentile = models.FloatField(null = True, blank = True)
+	campus_salary_median_percentile = models.FloatField(null = True, blank = True)
+	
 	median_salary = models.FloatField(null = True, blank=True)
 	average_salary = models.FloatField(null=True, blank = True)
+	#the highest salary in the college
 	max_salary = models.FloatField(null=True, blank = True)
+	#number of employees working full-time for this college
 	full_time_employees = models.FloatField(null = True, blank = True)
+	
+	#total hours in the college
+	total_employment_hours = models.FloatField(null = True, blank = True)
+	
+	#number of individuals in the college. Just realized this is more complicated than I thought. Maybe I won't do this quite yet.
 	individual_employees = models.IntegerField(null = True, blank = True)
+	
 	salaries_sum = models.IntegerField(null=True, blank = True)
 
 
-
-	#code = models.CharField(max_length = 5)
-
-	total_budget = models.IntegerField(default = 0)
 	def __unicode__(self):
 		return self.name
-	def save(self, *args, **kwargs):
-		#self.median_salary = self.get_median_salary()
+
+	def save_stats(self):
+		print self.name 
+		print "getting median"
+		self.median_salary = self.get_median_salary()
+		print "getting ftes"
+		self.full_time_employees = EmployeeDetail.objects.filter(identity__year = 2013, college = self, proposed_FTE__gte=1).count()
+		print "getting max"
+		self.max_salary = self.get_max_salary()
+		print "getting hours"
+		self.total_employment_hours = self.get_total_hours()
+		print "getting salary sum"
 		self.salaries_sum = self.get_sum()
+
+
+		self.save()
+	#this can't be run until all departments 
+	def save_stats2(self):
+		#self.college_salary_median_percentile = self.get_rank_by_college()
+		self.campus_salary_median_percentile = self.get_rank_percentile()
+		self.save()
+	def save(self, *args, **kwargs):
 		super(College, self).save(*args, **kwargs)
 
-	def get_median_salary(self):
-		members = EmployeeDetail.objects.filter(college = self)
-		all_salaries = []
-		for member in members:
-			if member.identity.proposed_total_salary > 0:
-				all_salaries.append(int(member.identity.proposed_total_salary))
-		median = numpy.median(all_salaries)
-		print median
-		print self.name
-		return median
-	def get_max_salary(self):
-		members = EmployeeDetail.objects.filter(college = self)
-		all_salaries = []
-		for member in members:
-			if member.identity.proposed_total_salary > 0:
-				all_salaries.append(int(member.identity.proposed_total_salary))
-
-		maximum = numpy.maximum(all_salaries)
-		return maximum
-
-	def get_full_time(self):
-		members = EmployeeDetail.objects.filter(college = self)
-		all_salaries = []
-		for member in members:
-			if member.identity.proposed_total_salary > 0:
-				all_salaries.append(int(member.identity.proposed_total_salary))
-
-		maximum = numpy.sum(all_hours)
-		return maximum
-
-
-	def get_keyed_salaries(self):
-		members = EmployeeDetail.objects.filter(college = self)
-		all_salaries = {}
-		for member in members:
-			if member.identity.proposed_total_salary > 0:
-				all_salaries[member.identity.id] = []
-				all_salaries[member.identity.id].append(int(member.identity.proposed_total_salary))
-		return all_salaries
-
 	def get_salaries(self):
-		members = EmployeeDetail.objects.filter(college = self)
-		all_salaries = []
-		for member in members:
-			if member.identity.proposed_total_salary > 0:
-				all_salaries.append(int(member.identity.proposed_total_salary))
-		return all_salaries
-
-	def get_sum(self):
-		members = EmployeeDetail.objects.filter(college = self)
-		college_salaries = []
-		for member in members:
-			college_salaries.append(int(member.proposed_salary))
-
-		sum = numpy.sum(college_salaries)
-		return sum
-
-
-
-class Department(models.Model):
-	name = models.CharField(max_length=50)
-	college = models.ForeignKey(College)
-	total_budget = models.IntegerField(default = 0)
-	
-	def __unicode__(self):
-		return self.name
-
-	def save(self, *args, **kwargs):
-		super(Department, self).save(*args, **kwargs)
-
-	def get_salaries(self):
-		members = EmployeeDetail.objects.filter(college = self)
+		members = EmployeeDetail.objects.filter(college = self, is_primary = True, identity__year =2013)
 		all_salaries = {}
 		for member in members:
 			if member.identity.proposed_total_salary > 0:
@@ -125,7 +88,185 @@ class Department(models.Model):
 				all_salaries.append(int(member.identity.proposed_total_salary))
 		return all_salaries
 
-#	def get_averages(self):
+
+	def get_median_salary(self):
+		members = EmployeeDetail.objects.filter(college = self, is_primary = True, identity__year = 2013)
+		all_salaries = []
+		
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+		
+		median = numpy.median(all_salaries)
+
+		print median
+		return median
+	def get_max_salary(self):
+		members = EmployeeDetail.objects.filter(college = self, is_primary = True, identity__year =2013)
+		all_salaries = []
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+
+		if len(all_salaries) > 0:
+			maximum = max(all_salaries)
+		else:
+			maximum = 0
+		print maximum
+		return maximum
+
+	def get_total_hours(self):
+		members = EmployeeDetail.objects.filter(college = self, identity__year = 2013)
+		the_sum = 0
+		for member in members:
+			the_sum += member.proposed_FTE
+
+		print the_sum
+		return the_sum
+
+	def get_sum(self):
+		members = EmployeeDetail.objects.filter(college = self, identity__year =2013)
+		the_sum = 0
+		for member in members:
+			the_sum += int(member.proposed_salary)
+
+		print the_sum
+		return the_sum
+
+	def get_rank_percentile(self):
+		departments = Department.objects.filter(campus = self.campus)
+		all_medians = []
+		for d in departments:
+			all_medians.append(d.median_salary)
+		rank = stats.percentileofscore(all_medians, self.median_salary, kind='strict')
+
+		return rank
+
+
+
+class Department(models.Model):
+	name = models.CharField(max_length=50)
+	college = models.ForeignKey(College)
+	total_budget = models.IntegerField(default = 0)
+	######TODO: this guy. ######
+	college_salary_median_percentile = models.IntegerField(null = True, blank = True)
+	campus_salary_median_percentile = models.FloatField(null = True, blank = True)
+	
+	median_salary = models.FloatField(null = True, blank=True)
+	average_salary = models.FloatField(null=True, blank = True)
+	#the highest salary in the department
+	max_salary = models.FloatField(null=True, blank = True)
+	#number of employees working full-time for this department
+	full_time_employees = models.FloatField(null = True, blank = True)
+	
+	#total hours in the department
+	total_employment_hours = models.FloatField(null = True, blank = True)
+	
+	#number of individuals in the department. Just realized this is more complicated than I thought. Maybe I won't do this quite yet.
+	individual_employees = models.IntegerField(null = True, blank = True)
+	
+	salaries_sum = models.IntegerField(null=True, blank = True)
+
+
+	def __unicode__(self):
+		return self.name
+
+	def save_stats(self):
+		print self.name 
+		print "getting median"
+		self.median_salary = self.get_median_salary()
+		print "getting ftes"
+		self.full_time_employees = EmployeeDetail.objects.filter(identity__year = 2013, department = self, proposed_FTE__gte=1).count()
+		print "getting max"
+		self.max_salary = self.get_max_salary()
+		print "getting hours"
+		self.total_employment_hours = self.get_total_hours()
+		print "getting salary sum"
+		self.salaries_sum = self.get_sum()
+
+
+		self.save()
+	#this can't be run until all departments 
+	def save_stats2(self):
+		self.college_salary_median_percentile = self.get_rank_by_college()
+		self.campus_salary_median_percentile = self.get_rank_percentile()
+		self.save()
+	def save(self, *args, **kwargs):
+		super(Department, self).save(*args, **kwargs)
+
+	def get_salaries(self):
+		members = EmployeeDetail.objects.filter(department = self, is_primary = True, identity__year =2013)
+		all_salaries = {}
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries[member.identity.name]
+				all_salaries.append(int(member.identity.proposed_total_salary))
+		return all_salaries
+
+
+	def get_median_salary(self):
+		members = EmployeeDetail.objects.filter(department = self, is_primary = True, identity__year = 2013)
+		all_salaries = []
+		
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+		
+		median = numpy.median(all_salaries)
+
+		print median
+		return median
+	def get_max_salary(self):
+		members = EmployeeDetail.objects.filter(department = self, is_primary = True, identity__year =2013)
+		all_salaries = []
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+
+		if len(all_salaries) > 0:
+			maximum = max(all_salaries)
+		else:
+			maximum = 0
+		print maximum
+		return maximum
+
+	def get_total_hours(self):
+		members = EmployeeDetail.objects.filter(department = self, identity__year = 2013)
+		the_sum = 0
+		for member in members:
+			the_sum += member.proposed_FTE
+
+		print the_sum
+		return the_sum
+
+	def get_sum(self):
+		members = EmployeeDetail.objects.filter(department = self, identity__year =2013)
+		the_sum = 0
+		for member in members:
+			the_sum += int(member.proposed_salary)
+
+		print the_sum
+		return the_sum
+
+	def get_rank_percentile(self):
+		departments = Department.objects.filter(campus = self.college.campus)
+		all_medians = []
+		for d in departments:
+			all_medians.append(d.median_salary)
+
+		rank = stats.percentileofscore(all_medians, self.median_salary, kind='strict')
+
+		return rank
+
+	def get_rank_by_college(self):
+		departments = Department.objects.filter(college = self.college)
+		all_medians = []
+		for d in departments:
+			all_medians.append(d.median_salary)
+		rank = stats.percentileofscore(all_medians, self.median_salary, kind='strict')
+		return rank
+
+	#def get_averages(self):
 
 class Organization(models.Model):
 	name = models.CharField(max_length=255)
@@ -137,8 +278,8 @@ class Organization(models.Model):
 		super(Department, self).save(*args, **kwargs)
 
 class Position(models.Model):
-	title = models.CharField(max_length = 50)
-#	TYPE_CHOICES = (
+	title = models.CharField(max_length = 50)#
+	#TYPE_CHOICES = (
 		#Forget the terms. Civil service vs ... salaried?
 #		('Salaried', 'Salaried'),
 #		('Hourly', 'Hourly')
@@ -212,6 +353,8 @@ class Employee(models.Model):
 	total_percentile = models.FloatField(blank = True, null = True)
 	department_position_percentile = models.FloatField(blank = True, null = True)
 	college_position_percentile = models.FloatField(blank = True, null = True)
+	difference_from_college_median = models.FloatField(blank = True, null = True)
+	difference_from_dept_median= models.FloatField(blank = True, null = True)
 
 
 	# python manage.py shell
@@ -374,6 +517,16 @@ class EmployeeDetail(models.Model):
 	class Meta:
 		ordering = ['-proposed_salary']
 	
+	def save_differences(self):
+		if self.is_primary:
+			college_difference = self.identity.proposed_total_salary - self.college.median_salary
+			self.identity.difference_from_college_median = college_difference
+
+			dept_difference = self.identity.proposed_total_salary - self.department.median_salary
+			self.identity.difference_from_dept_median = dept_difference
+
+			self.identity.save()
+
 	def save(self, *args, **kwargs):
 		#self.median_salary = self.get_median_salary()
 	

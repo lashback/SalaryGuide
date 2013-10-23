@@ -140,11 +140,13 @@ INSTALLED_APPS = (
     # External apps
     'gunicorn',
     'haystack',
+    'mathfilters',
     
     # Project apps
     'apps.core',
     'apps.salaries',
     'south'
+
 )
 
 # Caching

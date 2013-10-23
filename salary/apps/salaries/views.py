@@ -71,9 +71,12 @@ def autocomplete(request):
 	data = []
 
 	for result in sqs:
+		#the_set = result.employee_set
+
 		data.append({
 			'name': str(result.full_name), 
 			'id': result.object.id
+		#	'position': 
 			}
 			)
 
@@ -93,3 +96,23 @@ def autocomplete(request):
 	#})
 	
 	return HttpResponse(full_response, content_type='application/json')
+
+def deans(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="deans_equity.csv"'
+
+	# The data is hard-coded here, but you could load it from a database or
+	# some other source.
+	csv_data = [('Name', 'Campus', 'College', 'Department', 'College Median Salary', 'Department Median Salary', 'Total Salary', 'Difference from College Median', 'Difference from Department Median')]
+	for dean in EmployeeDetail.objects.filter(identity__year = 2013, position__title = 'DEAN', is_primary = True):
+		csv_data += (
+			
+				 (dean.identity.identity.name, dean.college.campus.name, dean.college.name, dean.department.name, dean.college.median_salary, dean.department.median_salary, dean.identity.proposed_total_salary, dean.identity.difference_from_college_median, dean.identity.difference_from_dept_median),
+		)
+
+	t = loader.get_template('deans.txt')
+	c = Context({
+	    'data': csv_data,
+	})
+	response.write(t.render(c))
+	return response

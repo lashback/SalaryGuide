@@ -23,12 +23,6 @@ a{
 
   color:#333
 }
-input {
-    width:100%;
-    
-    border:1px solid #fff;
-        
-}
 
 button{  background-color:transparent;
   border:none;
@@ -60,7 +54,6 @@ html, body {
       padding-right: 20px;
       }
 }
-
 
 .typeahead,
 .tt-query,
@@ -128,7 +121,6 @@ html, body {
 
 
 
-
 </style>
 
 {% endblock %}
@@ -173,8 +165,10 @@ html, body {
  $('.typeahead').typeahead({
     name: 'employees',
     remote: '/search/autocomplete/?q=%QUERY',
+    valueKey:'name',
     //THIS IS A BAD WAY TO LINK BUT I DON'T CARE.
-    template: '<p><a href="../employee/{{id}}">{{name}}</a></p>',
+
+    template:'<p><a href="../employee/{{id}}">{{name}}</a></p>',
     engine:Hogan
   });
  {% endverbatim %}
