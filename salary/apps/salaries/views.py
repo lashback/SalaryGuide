@@ -2,7 +2,8 @@ from django.http import HttpResponse
 from django.template import Context, loader
 from apps.salaries.models import *
 from django.shortcuts import render_to_response, get_object_or_404
-
+from django.conf import settings
+import os
 from django.template import RequestContext
 #this isn't working
 from django.core.context_processors import csrf
@@ -29,11 +30,19 @@ def employeeSuper(request, employeeSuper_id):
 	
 	primary = p.get_primary_employment()
 
-
+	#####this hits the database. We don't want to do that. #####
 	college_employees = EmployeeDetail.objects.filter(college=primary.college, identity__year = 2013, is_primary = True) 
+	#college_employees = EmployeeDetail.objects.filter(college__campus=primary.college.campus, identity__year = 2013, is_primary = True) 
 	college_salaries = []
 	for e in college_employees:
 		college_salaries.append(e.identity.proposed_total_salary)
+	
+	######this pulls stuff from a static folder but I don't like it.
+
+	#college_salaries = []
+	#source = open(os.path.join(settings.STATIC_ROOT, 'json', '%s.json' % (primary.college.name,)))
+	#for line in source.readlines():
+	#		college_salaries.append(line)
 
 	return render_to_response('employeeSuper.html', {'employee':p, 'primary':primary, 'college_salaries':college_salaries})
 
