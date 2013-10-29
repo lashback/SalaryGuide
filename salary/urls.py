@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     url(r'^search/autocomplete/$', 'apps.salaries.views.autocomplete'),
     # Project URLs go here
 
-    (r'^api/', include(v1_api.urls)),
+    #(r'^api/', include(v1_api.urls)),
     url(r'^landing/', 'apps.salaries.views.landing',name = 'landing'),
 	url(r'^employee/(?P<employeeSuper_id>\d+)/$', 'apps.salaries.views.employeeSuper', name = 'employee'),
 	url(r'^college/(?P<college_id>\d+)/$', 'apps.salaries.views.college', name = 'college'),
