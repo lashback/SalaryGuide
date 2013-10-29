@@ -1,23 +1,11 @@
 from django.db import models
 #from django import forms #i don't actually know what this does and I don't ahve internet so just going with it.
 #from numpy import percentile
-from nameparser import HumanName
-from scipy import stats
-
-import numpy
 
 import math
 import functools
 
 
-'''
-We might be able to fucking do anything. 
-
-Find chaired professorships because they're 0-hour appts. 
-If one job is prof, another is the chair. But the chairs aren't necessarily paid
-
-
-'''
 class Institution(models.Model):
 #this is the university. allows for inclusion of other schools if you're interested.
 	name = models.CharField(max_length = 50)
@@ -350,7 +338,7 @@ class EmployeeSuper(models.Model):
 
 class Mug(models.Model):
 	identity = models.ForeignKey(EmployeeSuper, null = True)
-	image = models.ImageField(upload_to = 'img/mugs')
+	image = models.FileField(upload_to = 'img/mugs')
 	def __unicode__(self):
 		return "Mug for %s" %(self.identity)
 class Employee(models.Model):
