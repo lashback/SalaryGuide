@@ -79,6 +79,13 @@ h2 span {
 	font-size: 6.27em;
 }
 
+.hidden-phone iframe{
+position: absolute;
+bottom:0;
+padding-left: 10;
+max-width: fill-content;
+
+}
 
 </style>
 
@@ -94,7 +101,7 @@ h2 span {
 
 <div class="container-fluid">
 	<div class='row-fluid'>
-		<div class='span3'>
+		<div class='span3 hidden-phone'>
 
 			<div id="search">
 				<h3>SEARCH</h3>
@@ -111,7 +118,11 @@ h2 span {
 			</div>
 
 		</div>
-
+		<div class='visible-phone'>
+			<iframe id='adeacdc4' name='adeacdc4' src='http://www.oncampusweb.com/delivery/afr.php?zoneid=1884&amp;cb=INSERT_RANDOM_NUMBER_HERE' frameborder='0' scrolling='no' width='300' height='50'><a href='http://www.oncampusweb.com/delivery/ck.php?n=a9f738d7&amp;cb=INSERT_RANDOM_NUMBER_HERE' target='_blank'><img src='http://www.oncampusweb.com/delivery/avw.php?zoneid=1884&amp;cb=INSERT_RANDOM_NUMBER_HERE&amp;n=a9f738d7' border='0' alt='' /></a></iframe>
+			<!-- Center this -->
+			<input type="text"  placeholder='Search for employees' autocomplete="off" height='100' class="typeahead search-box" name="q">
+		</div>
 		<div class='span7' id='content'>
 			<div class='row-fluid'>
 				<div class='span12'>
@@ -183,6 +194,7 @@ h2 span {
 
 
 <script type="text/javascript">
+
 {% verbatim %}
  $('.typeahead').typeahead({
     name: 'employees',
@@ -194,13 +206,13 @@ h2 span {
   });
 
  $(document).ready(function() {
+ $('.tt-hint').css('display','none');
   $(window).keydown(function(event){
     if(event.keyCode == 13) {
       event.preventDefault();
       return false;
     }
-   //$('.typeahead').text.remove()
-  });
+      });
 });
  {% endverbatim %}
 
@@ -209,20 +221,27 @@ var values = {{college_salaries}}
 
 var formatCount = d3.format(",.0f");
 
-var margin = {top: 10, right: 30, bottom: 30, left: 30},
+var margin = {top: 10, right: 80, bottom: 30, left: 30},
     width = parseInt(d3.select('#histogram').style('width'), 10) - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    height = 350 - margin.top - margin.bottom;
 
-console.log(d3.max(values))
+//if ((d3.max(values)-d3.min(values)) < 1000000){
+
 var x = d3.scale.linear()
     //domain is usually 0-max
     .domain([0, d3.max(values)])
     .range([0, width]);
+/*} else {
+var x = d3.scale.log(10)
+    //domain is usually 0-max
+    .domain([0, d3.max(values)])
+    .range([0, width]);
+}*/
 
 var data = d3.layout.histogram()
 	//.range() is kind of redundant in retrospect.
 	//.range([d3.min(values), d3.max(values)])
-    .bins(x.ticks(15))
+    .bins(15)
     (values);
 
 var y = d3.scale.linear()
@@ -232,6 +251,7 @@ var y = d3.scale.linear()
 var xAxis = d3.svg.axis()
     .scale(x)
     .tickFormat(function(d) { return "$" + formatCount(d); })
+    .ticks(5)
     .orient("bottom");
 
 var svg = d3.select("#histogram").append("svg")
@@ -246,7 +266,7 @@ var bar = svg.selectAll(".bar")
     //.attr("class", "bar")
     .attr("class", function(d) {
         	var holder =''
-			if ((d.x <= {{primary.identity.proposed_total_salary}}) && ((d.x + d.dx) > {{primary.identity.proposed_total_salary}})) {
+			if ((d.x < {{primary.identity.proposed_total_salary}}) && ((d.x + d.dx) >= {{primary.identity.proposed_total_salary}})) {
 			holder = "highlighted";
 			} else {
 				holder= "bar"; 
@@ -270,15 +290,6 @@ svg.append("g")
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis);
 
-
-d3.select(window).on('resize', resize); 
-
-function resize() {
-	console.log('ya did it')
-    width = parseInt(d3.select('#histogram').style('width'), 10);
-    width = width - margin.left - margin.right;
-    x.range([0, width]);
-}
 
 </script>
 

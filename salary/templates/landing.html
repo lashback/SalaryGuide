@@ -193,13 +193,16 @@ html, body {
     valueKey:'name',
     //THIS IS A BAD WAY TO LINK BUT I DON'T CARE.
 
-    template:'<p><a href="../employee/{{id}}">{{name}}</a></p>',
+    template:'<p style="font-weight:600"><a href="../employee/{{id}}">{{name}}</a></p><p>{{position}}</p>'
+    ,
     engine:Hogan
   });
 
- $(document).ready(function() {
-  $(window).keydown(function(event){
-    if(event.keyCode == 13) {
+$(document).ready(function() {
+$('.tt-hint').css('display','none');
+
+$(window).keydown(function(event){
+  if(event.keyCode == 13) {
       event.preventDefault();
       return false;
     }

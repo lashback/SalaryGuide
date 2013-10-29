@@ -152,6 +152,7 @@ INSTALLED_APPS = (
 # Caching
 CACHE_MIDDLEWARE_KEY_PREFIX = 'salary'
 CACHE_MIDDLEWARE_SECONDS = 3 # 3 seconds
+ALLOWED_HOSTS = ['localhost']
 
 CACHES = {
     'default': {

@@ -1,18 +1,19 @@
 from common import *
 
-DEBUG = False
+DEBUG = True
 
 if DEBUG == True:
     MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + ('apps.core.middleware.LoginRequiredMiddleware',)
+
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'salary',
         'PORT': '6432', # PgBouncer port
-        'HOST': 'data.apps.cironline.org',
+        'HOST': 'data.apps.cironline.org', #this will probably be local host
         'USER': 'salary',
-        'PASSWORD': 'YOMhK7czGC'
+        'PASSWORD': 'YOMhK7czGC' #automatically generated.
     }
 }
 

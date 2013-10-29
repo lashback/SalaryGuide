@@ -411,6 +411,9 @@ class Employee(models.Model):
 
 		return rank
 
+	def get_primary(self):
+		details = EmployeeDetail.objects.filter(year = 2013, identity = self, is_primary = True)[:1]
+
 
 
 	def get_primary_employment(self):

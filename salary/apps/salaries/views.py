@@ -75,7 +75,7 @@ def bubbles(request):
 
 
 def autocomplete(request):
-	sqs = SearchQuerySet().autocomplete(content_auto=request.GET.get('q', ''))[:6]
+	sqs = SearchQuerySet().autocomplete(content_auto=request.GET.get('q', ''))[:7]
 	##### Return these fuckers with keys #####
 	#suggestions = []
 
@@ -83,12 +83,15 @@ def autocomplete(request):
 	data = []
 
 	for result in sqs:
-		#the_set = result.employee_set
+		
+		#so get the full set, but there should only be one attribute.
+		primary = result.object.get_primary_employment()
+
 
 		data.append({
 			'name': str(result.full_name), 
 			'id': result.object.id,
-			
+			'position': primary.position.title
 		#	'position': 
 			}
 			)
