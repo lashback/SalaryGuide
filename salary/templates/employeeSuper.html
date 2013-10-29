@@ -27,8 +27,12 @@ h2 span {
 
 .search-box{
     background: url('{% static "img/magnifyingglass.png" %}') no-repeat right;
-    background-size: 30px 30px;
+    background-size: 25px 25px;
+    width: 90%
+
  }
+
+
 
 #search {
 	background-color: #333;
@@ -39,12 +43,12 @@ h2 span {
 
 #content{
 	height:100vh;
-	border-right: thin solid #444;
+	
 
 }
 
 #more_info {
-	
+	border-left: thin solid #444;
 	height: 100vh;
 }
 #context{
@@ -76,6 +80,7 @@ h2 span {
 	padding-top:1em;
 }
 #salary h1{
+	font-weight: 600;
 	font-size: 6.27em;
 }
 
@@ -186,8 +191,8 @@ max-width: fill-content;
 				</div>
 			</div>
 		</div>
-		<div class='span2' id='more_info'>
-			<h2>College: {{primary.college}}</h2>
+		<div class='span2 hidden-phone' id='more_info'>
+			<h3>{{primary.college}}</h3>
 		</div>
 	</div>
 </div>
@@ -201,7 +206,7 @@ max-width: fill-content;
     valueKey: 'name',
     remote: '/search/autocomplete/?q=%QUERY',
     //THIS IS A BAD WAY TO LINK BUT I DON'T CARE.
-    template: '<p><a href="../{{id}}">{{name}}</a></p>',
+    template:'<p style="font-weight:600"><a href="../{{id}}">{{name}}</a></p><p>{{position}}</p>',
     engine:Hogan
   });
 

@@ -2,6 +2,14 @@ import logging
 import os
 import django
 
+
+try:
+    from secret_key import *
+except ImportError:
+    SETTINGS_DIR=os.path.abspath(os.path.dirname(__file__))
+    generate_secret_key(os.path.join(SETTINGS_DIR, 'secret_key.py'))
+    from secret_key import *
+
 # Base paths
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 SITE_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -98,7 +106,6 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'n#30m6e07*(mz_nh6(&r)!4)05gpwix5g40t)ej@-krskk%8et'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

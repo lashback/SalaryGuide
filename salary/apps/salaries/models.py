@@ -38,6 +38,7 @@ class College(models.Model):
 	campus_salary_median_percentile = models.FloatField(null = True, blank = True)
 	
 	median_salary = models.FloatField(null = True, blank=True)
+	median_faculty_salary = models.FloatField(null = True, blank = True)
 	average_salary = models.FloatField(null=True, blank = True)
 	#the highest salary in the college
 	max_salary = models.FloatField(null=True, blank = True)
@@ -58,16 +59,18 @@ class College(models.Model):
 
 	def save_stats(self):
 		print self.name 
-		print "getting median"
-		self.median_salary = self.get_median_salary()
-		print "getting ftes"
-		self.full_time_employees = EmployeeDetail.objects.filter(identity__year = 2013, college = self, proposed_FTE__gte=1).count()
-		print "getting max"
-		self.max_salary = self.get_max_salary()
-		print "getting hours"
-		self.total_employment_hours = self.get_total_hours()
-		print "getting salary sum"
-		self.salaries_sum = self.get_sum()
+		self.median_faculty_salary = self.get_median_faculty_salary(
+)	#
+	#	print "getting median"
+	#	self.median_salary = self.get_median_salary()
+	#	print "getting ftes"
+	#	self.full_time_employees = EmployeeDetail.objects.filter(identity__year = 2013, college = self, proposed_FTE__gte=1).count()
+	#	print "getting max"
+	#	self.max_salary = self.get_max_salary()
+	#	print "getting hours"
+	#	self.total_employment_hours = self.get_total_hours()
+	#	print "getting salary sum"
+	#	self.salaries_sum = self.get_sum()
 
 
 		self.save()
@@ -76,6 +79,7 @@ class College(models.Model):
 		#self.college_salary_median_percentile = self.get_rank_by_college()
 		self.campus_salary_median_percentile = self.get_rank_percentile()
 		self.save()
+
 	def save(self, *args, **kwargs):
 		super(College, self).save(*args, **kwargs)
 
@@ -88,9 +92,21 @@ class College(models.Model):
 				all_salaries.append(int(member.identity.proposed_total_salary))
 		return all_salaries
 
-
 	def get_median_salary(self):
 		members = EmployeeDetail.objects.filter(college = self, is_primary = True, identity__year = 2013)
+		all_salaries = []
+		
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+		
+		median = numpy.median(all_salaries)
+
+		print median
+		return median
+
+	def get_median_faculty_salary(self):
+		members = EmployeeDetail.objects.filter(college = self, is_primary = True, identity__year = 2013, identity__has_tenure = True)
 		all_salaries = []
 		
 		for member in members:
@@ -355,7 +371,7 @@ class Employee(models.Model):
 	college_position_percentile = models.FloatField(blank = True, null = True)
 	difference_from_college_median = models.FloatField(blank = True, null = True)
 	difference_from_dept_median= models.FloatField(blank = True, null = True)
-
+	has_tenure = models.BooleanField(default = False)
 
 	# python manage.py shell
 	# import...
@@ -374,6 +390,16 @@ class Employee(models.Model):
 			self.college_percentile = self.get_rank_according_to_things(year = self.year, college = primary.college)
 		if not self.total_percentile:
 			self.total_percentile = self.get_rank_according_to_things(year =  self.year, campus = primary.college.campus)	
+		self.save()
+
+	def get_tenured(self):
+		details = EmployeeDetail.objects.filter(identity = self)
+		indicator = False
+		for d in details:
+			if len(d.tenure) > 0:
+				indicator = True
+
+		self.has_tenure = indicator
 		self.save()
 
 	def save(self, **kwargs):
