@@ -9,11 +9,11 @@ from haystack.views import SearchView, search_view_factory
 admin.autodiscover()
 
 #API
-from tastypie.api import Api
-from apps.salaries.api import CollegeResource
+#from tastypie.api import Api
+#from apps.salaries.api import CollegeResource
 
-v1_api = Api(api_name='v1')
-v1_api.register(CollegeResource())
+#v1_api = Api(api_name='v1')
+#v1_api.register(CollegeResource())
 
 urlpatterns = patterns('',
     
