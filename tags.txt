@@ -1,0 +1,18 @@
+'''
+0	College Code	
+1	College Name
+2	Dept Code
+3	Dept Name
+4	Employee Name
+5	Job Title
+6	Tenure
+7	"Empl Class"
+8	"Present FTE"
+9	"Proposed FTE"
+10	"Present Salary" 
+11	"Proposed Salary"
+12	"Empl Total Present FTE"
+13	"Empl Total Proposed FTE"
+14	"Empl Total Present Salary"
+15	"Empl Total Proposed Salary"
+'''
