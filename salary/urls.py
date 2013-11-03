@@ -37,6 +37,7 @@ urlpatterns = patterns('',
     url(r'^deans/', 'apps.salaries.views.deans', name = 'deans'),
 
 #    url(r'^/search/autocomplete/', 'apps.salaries.views.autocomplete')
+    (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.html'}),
 
 
 )

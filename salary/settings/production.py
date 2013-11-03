@@ -13,8 +13,8 @@ DATABASES = {
         'PORT': '6432', # PgBouncer port
         'HOST': 'data.apps.cironline.org', #this will probably be local host
         'USER': 'salary',
-        'PASSWORD': 'YOMhK7czGC' #automatically generated.
-    }
+        'PASSWORD': 'YOMhK7czGC' #automatically generated
+.    }
 }
 
 # Static

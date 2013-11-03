@@ -17,6 +17,7 @@ SITE_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -122,8 +123,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
-    
 )
+TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
+"django.core.context_processors.debug",
+"django.core.context_processors.i18n",
+"django.core.context_processors.media",
+"django.core.context_processors.static",
+"django.core.context_processors.tz",
+"django.contrib.messages.context_processors.messages")
 
 ROOT_URLCONF = 'salary.urls'
 
