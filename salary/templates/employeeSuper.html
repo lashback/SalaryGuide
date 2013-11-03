@@ -24,6 +24,11 @@ h2 span {
 	color:#04BFBF;
 }
 
+h3 span {
+
+	font-weight: 600;
+	color:#04BFBF;
+}
 
 .search-box{
     background: url('{% static "img/magnifyingglass.png" %}') no-repeat right;
@@ -39,18 +44,26 @@ h2 span {
 	color: #eee;
 	padding:.5em;
 	height: 100vh;
+	
+	
 }
 
 #content{
 	height:100vh;
 	
-
 }
 
 #more_info {
 	border-left: thin solid #444;
 	height: 100vh;
+	padding-left: 1em;
 }
+
+#more_info h2{
+	color:#04BFBF;;
+	font-weight: 600;
+}
+
 #context{
 	padding-top:1em;
 }
@@ -84,13 +97,7 @@ h2 span {
 	font-size: 6.27em;
 }
 
-.hidden-phone iframe{
-position: absolute;
-bottom:0;
-padding-left: 10;
-max-width: fill-content;
 
-}
 
 </style>
 
@@ -104,21 +111,35 @@ max-width: fill-content;
 
 {% block content %}
 
-<div class="container-fluid">
+
 	<div class='row-fluid'>
 		<div class='span3 hidden-phone'>
 
 			<div id="search">
 				<h3>SEARCH</h3>
 				<form method="post" action="/search/" class="autocomplete-me">
-					<input type="text"  placeholder='Search for employees' autocomplete="off" height='100' class="typeahead search-box" name="q">
+					<input type="text"  placeholder='Search for employees' autocomplete="off" class="typeahead search-box" name="q">
 						<!-- <button type="submit"><img src="{% static "img/magnifyingglass_teal.png" %}" alt="Search" height="40" width="40"/>
 						</button> -->
 				</form>
-			<div class='row-fluid'>
-				<div class='span12'>
-					<iframe id='ad5e4bcd' name='ad5e4bcd' class='hidden-phone' src='http://www.oncampusweb.com/delivery/afr.php?zoneid=1882&amp;cb=INSERT_RANDOM_NUMBER_HERE' frameborder='0' scrolling='no' width='300' height='250'><a href='http://www.oncampusweb.com/delivery/ck.php?n=a07b31ab&amp;cb=INSERT_RANDOM_NUMBER_HERE' target='_blank'><img src='http://www.oncampusweb.com/delivery/avw.php?zoneid=1882&amp;cb=INSERT_RANDOM_NUMBER_HERE&amp;n=a07b31ab' border='0' alt='' /></a></iframe>
-				</div>
+				<div class='row-fluid'>
+				<div class='span12' id="ad1">
+					<script type='text/javascript'><!--//<![CDATA[
+   var m3_u = (location.protocol=='https:'?'https://www.oncampusweb.com/delivery/ajs.php':'http://www.oncampusweb.com/delivery/ajs.php');
+   var m3_r = Math.floor(Math.random()*99999999999);
+   if (!document.MAX_used) document.MAX_used = ',';
+   document.write ("<scr"+"ipt type='text/javascript' src='"+m3_u);
+   document.write ("?zoneid=1882");
+   document.write ('&amp;cb=' + m3_r);
+   if (document.MAX_used != ',') document.write ("&amp;exclude=" + document.MAX_used);
+   document.write (document.charset ? '&amp;charset='+document.charset : (document.characterSet ? '&amp;charset='+document.characterSet : ''));
+   document.write ("&amp;loc=" + escape(window.location));
+   if (document.referrer) document.write ("&amp;referer=" + escape(document.referrer));
+   if (document.context) document.write ("&context=" + escape(document.context));
+   if (document.mmm_fo) document.write ("&amp;mmm_fo=1");
+   document.write ("'><\/scr"+"ipt>");
+//]]>--></script>
+					</div>
 			</div>
 			</div>
 
@@ -168,37 +189,129 @@ max-width: fill-content;
 			</div>
 			<div class='row-fluid'>
 				<div class='span12'>
+					
 					<div id='context'>
 						<h3>Making more than <strong>{{primary.identity.total_percentile |floatformat:"1" }}%</strong> of the rest of {{primary.college.campus}}
 					</div>
 				</div>
 			</div>
+
 			<div class='row-fluid'>
 				<div class='span12'>
-				<h3>Makes  {% if primary.identity.difference_from_dept_median > 0 %} 
-								${{ primary.identity.difference_from_dept_median | intcomma }}0 more than
+				<h3>Makes  <span>{% if primary.identity.difference_from_dept_median > 0 %} 
+								${{ primary.identity.difference_from_dept_median | intcomma }}0 more 
 						{% else %}
-						${{ primary.identity.difference_from_dept_median | abs }}0 less than 
-						{% endif %} than the median salary in {{primary.department.name}}. 
+						${{ primary.identity.difference_from_dept_median | abs }}0 less 
+						{% endif %}</span> than the median salary in {{primary.department.name}}. 
 						</h3>
 				</div>
 			</div>
 			<div class='row-fluid'>
 				<hr>
 				<h2 style='text-align:center'>Where <span> {{employee.first_name}}</span> fits into <strong>{{primary.college.name}}'s salaries</strong></h2>
-				<div class='span12' id='histogram'>
+
+				<div class='span12'>
+
+				<svg id="histogram" width="960" height="350"
+  viewBox="0 0 960 350"
+  preserveAspectRatio="xMidYMid">
+</svg>
 				
 				</div>
 			</div>
 		</div>
 		<div class='span2 hidden-phone' id='more_info'>
-			<h3>{{primary.college}}</h3>
+			
+			<h2>{{primary.college.name}}</h2>
+			{% if primary.college.total_budget%}
+			<h4>Overall Budget</h4>
+			<h3>${{primary.college.total_budget|intcomma}}</h3>
+			{% endif%}
+	
+			{% if primary.college.US_news_rank%}
+			<h4>U.S. News Rank:</h4>
+			<h3>{{primary.college.US_news_rank|intcomma}}</h3>
+			{% endif%}
+
+
+			{% if primary.college.median_faculty_salary and primary.college.median_faculty_salary < 1 %}
+			
+			<h4>Median faculty salary:</h4>
+			<h3>${{primary.college.median_faculty_salary|intcomma}}0</h3>
+			{% endif%}
+
+
+			{% if primary.college.campus_salary_median_percentile%}
+			<h4><span>{{primary.college.name}}'s</span> median faculty salary is more than {{primary.college.campus_salary_median_percentile|floatformat:"1"}}% of {{primary.college.campus}}'s colleges.</h4>
+			<h3>${{primary.college.median_faculty_salary|intcomma}}0</h3>
+			{% endif%}
+
+
+
+			{% if primary.identity.employeedetail_set.all|length > 1 %}	
+			<hr>
+			<div class='positions'>
+				<h1 style='font-size:2.5em;color:#333'> {{employee.first_name}}'s appointments</h1>
+				
+				<table class='table'>
+				<thead>
+				<tr style='font-weight:600; color:#04BFBF'>
+					<td>Position</td>
+					<td>College</td>
+					<td>Salary</td>
+				</tr>
+				</thead>
+				<tbody>
+				{% for d in primary.identity.employeedetail_set.all%}
+					<tr>
+						<td>{{d.position.title|title}}</td>
+						<td>{{d.college.name}}</td>
+						<td>${{d.proposed_salary|intcomma}}0</td>
+					</tr>
+				{% endfor %}
+
+					<tr>
+						<td style='font-weight:600'>Total:</td>
+						<td></td>
+						<td>${{primary.identity.proposed_total_salary|intcomma}}0</td>
+					<tr>
+
+				</tbody>
+				</table>
+			</div>
+			{% endif %}
+			
+<div id='ad2'>
+				<script type='text/javascript'><!--//<![CDATA[
+   var m3_u = (location.protocol=='https:'?'https://www.oncampusweb.com/delivery/ajs.php':'http://www.oncampusweb.com/delivery/ajs.php');
+   var m3_r = Math.floor(Math.random()*99999999999);
+   if (!document.MAX_used) document.MAX_used = ',';
+   document.write ("<scr"+"ipt type='text/javascript' src='"+m3_u);
+   document.write ("?zoneid=1882");
+   document.write ('&amp;cb=' + m3_r);
+   if (document.MAX_used != ',') document.write ("&amp;exclude=" + document.MAX_used);
+   document.write (document.charset ? '&amp;charset='+document.charset : (document.characterSet ? '&amp;charset='+document.characterSet : ''));
+   document.write ("&amp;loc=" + escape(window.location));
+   if (document.referrer) document.write ("&amp;referer=" + escape(document.referrer));
+   if (document.context) document.write ("&context=" + escape(document.context));
+   if (document.mmm_fo) document.write ("&amp;mmm_fo=1");
+   document.write ("'><\/scr"+"ipt>");
+//]]>--></script>
+</div>
+			</div>
 		</div>
 	</div>
-</div>
+
 
 
 <script type="text/javascript">
+var aspect = 960 / 350,
+    chart = $("#histogram");
+$(window).on("resize", function() {
+    var targetWidth = chart.parent().width();
+    chart.attr("width", targetWidth);
+    chart.attr("height", targetWidth / aspect);
+});
 
 {% verbatim %}
  $('.typeahead').typeahead({
@@ -212,6 +325,7 @@ max-width: fill-content;
 
  $(document).ready(function() {
  $('.tt-hint').css('display','none');
+ 
   $(window).keydown(function(event){
     if(event.keyCode == 13) {
       event.preventDefault();

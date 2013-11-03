@@ -1,7 +1,8 @@
 from django.db import models
 #from django import forms #i don't actually know what this does and I don't ahve internet so just going with it.
-#from numpy import percentile
-
+from numpy import percentile
+import numpy
+import scipy
 import math
 import functools
 
@@ -157,6 +158,7 @@ class Department(models.Model):
 	campus_salary_median_percentile = models.FloatField(null = True, blank = True)
 	
 	median_salary = models.FloatField(null = True, blank=True)
+	median_faculty_salary = models.FloatField(null = True, blank = True)
 	average_salary = models.FloatField(null=True, blank = True)
 	#the highest salary in the department
 	max_salary = models.FloatField(null=True, blank = True)
@@ -170,7 +172,23 @@ class Department(models.Model):
 	individual_employees = models.IntegerField(null = True, blank = True)
 	
 	salaries_sum = models.IntegerField(null=True, blank = True)
+	
+	def save_median(self):
+		self.median_faculty_salary = self.get_median_faculty_salary()
+		self.save()
 
+	def get_median_faculty_salary(self):
+		members = EmployeeDetail.objects.filter(department = self, is_primary = True, identity__year = 2013, identity__has_tenure = True)
+		all_salaries = []
+		
+		for member in members:
+			if member.identity.proposed_total_salary > 0:
+				all_salaries.append(int(member.identity.proposed_total_salary))
+		
+		median = numpy.median(all_salaries)
+
+		print median
+		return median
 
 	def __unicode__(self):
 		return self.name

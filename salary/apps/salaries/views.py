@@ -79,7 +79,6 @@ def autocomplete(request):
 	##### Return these fuckers with keys #####
 	#suggestions = []
 
-
 	data = []
 
 	for result in sqs:
@@ -115,15 +114,17 @@ def autocomplete(request):
 
 def deans(request):
 	response = HttpResponse(content_type='text/csv')
-	response['Content-Disposition'] = 'attachment; filename="deans_equity.csv"'
+	response['Content-Disposition'] = 'attachment; filename="employee_equity.csv"'
 
 	# The data is hard-coded here, but you could load it from a database or
 	# some other source.
-	csv_data = [('Name', 'Campus', 'College', 'Department', 'College Median Salary', 'Department Median Salary', 'Total Salary', 'Difference from College Median', 'Difference from Department Median')]
-	for dean in EmployeeDetail.objects.filter(identity__year = 2013, position__title = 'DEAN', is_primary = True):
+	csv_data = [('Name', 'Primary Position', 'Campus', 'College', 'Department', 'College Faculty Median Salary', 'Department Median Faculty Salary', 'Employee total salary', 'Difference from College Faculty Median', 'Difference from Department Faculty Median')]
+	for dean in EmployeeDetail.objects.filter(identity__year = 2013, is_primary = True):
+		dept_difference = dean.identity.proposed_total_salary - dean.department.median_faculty_salary
+		college_difference = dean.identity.proposed_total_salary - dean.college.median_faculty_salary
+
 		csv_data += (
-			
-				 (dean.identity.identity.name, dean.college.campus.name, dean.college.name, dean.department.name, dean.college.median_salary, dean.department.median_salary, dean.identity.proposed_total_salary, dean.identity.difference_from_college_median, dean.identity.difference_from_dept_median),
+				 (dean.identity.identity.name, dean.position.title, dean.college.campus.name, dean.college.name, dean.department.name, dean.college.median_faculty_salary, dean.department.median_faculty_salary, dean.identity.proposed_total_salary, college_difference, dept_difference),
 		)
 
 	t = loader.get_template('deans.txt')
