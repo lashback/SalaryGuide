@@ -14,6 +14,16 @@ Salary Guide | The Daily Illini
 
 <style>
 
+/*
+
+IDEA IDEA IDEA
+okay. So we create a new form. The typeahead POSTS the id to the form, and then hitting enter posts the form, which takes you to the employee's id.
+
+
+*/
+
+
+
 body {
 
 	background-color:#04BFBF;
@@ -31,10 +41,12 @@ a{
     background-color: #fff;
     background-size: 15px 15px;
     padding: 6px;
-    padding-left:20px;
+    padding-left:20px; 
     border: 2px solid #333;
     border-radius: 6px;
-    width: 80%;
+    width: 50%;
+    
+    
 }
 
 
@@ -70,10 +82,10 @@ html, body {
 .tt-query,
 .tt-hint {
   width: 396px;
-  height: 30px;
+  height: 15px;
   padding: 8px 12px;
   font-size: 24px;
-  line-height: 30px;
+  line-height: 15px; 
   border: 2px solid #ccc;
   -webkit-border-radius: 8px;
      -moz-border-radius: 8px;
@@ -81,12 +93,13 @@ html, body {
   outline: none;
 }
 
+
 .typeahead {
   background-color: #fff;
 }
 
 .typeahead:focus {
-  border: 2px solid #0097cf;
+  border: 2px solid #04BFBF;
 }
 
 .tt-query {
@@ -100,8 +113,6 @@ html, body {
 }
 
 .tt-dropdown-menu {
-  width: 422px;
-  margin-top: 12px;
   padding: 8px 0;
   background-color: #fff;
   border: 1px solid #ccc;
@@ -115,24 +126,20 @@ html, body {
 }
 
 .tt-suggestion {
-  padding: 3px 20px;
+  padding: 3px;
   font-size: 18px;
-  line-height: 24px;
+  
 }
 
-.tt-suggestion.tt-is-under-cursor {
-  color: #fff;
-  background-color: #0097cf;
-
-}
 
 .tt-suggestion p {
   margin: 0;
 }
 
- 
-#input-containger
+.typeahead .search-box .tt-query{
 
+  background-color: #fff;
+}
 
 
 </style>
@@ -168,14 +175,14 @@ html, body {
 
 <div class='row-fluid'>
 
-<div class='span4 offset4'>
+<div class='span12'>
 <div id='searchform'>
 
 <form method="post" action="/search/" class="autocomplete-me">
     <div class='rowfluid'>
     
       <div class='span12'>
-      <div class='input-container'>
+      <div class='input-container pagination-centered'>
         <input type="text"  placeholder='Search for employees' autocomplete="off" height='100' class="typeahead search-box" name="q">
       </div>
       </div>
@@ -191,22 +198,23 @@ html, body {
     name: 'employees',
     remote: '/search/autocomplete/?q=%QUERY',
     valueKey:'name',
-    limit: 7,
+    limit: 8,
     //THIS IS A BAD WAY TO LINK BUT I DONT CARE.
 
-    template:'<p style="font-weight:600"><a href="../employee/{{id}}">{{name}}</a></p><p>{{position}}</p>',
+    template:'<a href="../employee/{{id}}"><hr><div><p style="float:right;font-style:italic">{{campus}}</p><p style="font-weight:600">{{name}}</p><p>{{position}}</p></div><hr></a>',
     engine:Hogan
   });
 
 $(document).ready(function() {
 $('.tt-hint').css('display','none');
-
+$('input-container').css('text-align','center')
+/*
 $(window).keydown(function(event){
   if(event.keyCode == 13) {
       event.preventDefault();
       return false;
     }
-  });
+  }); */
 });
  {% endverbatim %}
 

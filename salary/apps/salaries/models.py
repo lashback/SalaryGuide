@@ -1,8 +1,10 @@
 from django.db import models
 #from django import forms #i don't actually know what this does and I don't ahve internet so just going with it.
 from numpy import percentile
+from nameparser.parser import HumanName
 import numpy
 import scipy
+from scipy import stats
 import math
 import functools
 
@@ -31,6 +33,7 @@ class College(models.Model):
 	average_salary = models.FloatField(null=True, blank = True)
 	#the highest salary in the college
 	max_salary = models.FloatField(null=True, blank = True)
+	
 	#number of employees working full-time for this college
 	full_time_employees = models.FloatField(null = True, blank = True)
 	
@@ -49,17 +52,17 @@ class College(models.Model):
 	def save_stats(self):
 		print self.name 
 		self.median_faculty_salary = self.get_median_faculty_salary(
-)	#
-	#	print "getting median"
-	#	self.median_salary = self.get_median_salary()
-	#	print "getting ftes"
-	#	self.full_time_employees = EmployeeDetail.objects.filter(identity__year = 2013, college = self, proposed_FTE__gte=1).count()
-	#	print "getting max"
-	#	self.max_salary = self.get_max_salary()
-	#	print "getting hours"
-	#	self.total_employment_hours = self.get_total_hours()
-	#	print "getting salary sum"
-	#	self.salaries_sum = self.get_sum()
+)	
+		print "getting median"
+		self.median_salary = self.get_median_salary()
+		print "getting ftes"
+		self.full_time_employees = EmployeeDetail.objects.filter(identity__year = 2013, college = self, proposed_FTE__gte=1).count()
+		print "getting max"
+		self.max_salary = self.get_max_salary()
+		print "getting hours"
+		self.total_employment_hours = self.get_total_hours()
+		print "getting salary sum"
+		self.salaries_sum = self.get_sum()
 
 
 		self.save()
@@ -167,12 +170,9 @@ class Department(models.Model):
 	
 	#total hours in the department
 	total_employment_hours = models.FloatField(null = True, blank = True)
-	
 	#number of individuals in the department. Just realized this is more complicated than I thought. Maybe I won't do this quite yet.
 	individual_employees = models.IntegerField(null = True, blank = True)
-	
 	salaries_sum = models.IntegerField(null=True, blank = True)
-	
 	def save_median(self):
 		self.median_faculty_salary = self.get_median_faculty_salary()
 		self.save()
@@ -210,6 +210,7 @@ class Department(models.Model):
 		self.save()
 	#this can't be run until all departments 
 	def save_stats2(self):
+		self.median_faculty_salary = self.get_median_faculty_salary
 		self.college_salary_median_percentile = self.get_rank_by_college()
 		self.campus_salary_median_percentile = self.get_rank_percentile()
 		self.save()
@@ -271,7 +272,7 @@ class Department(models.Model):
 		return the_sum
 
 	def get_rank_percentile(self):
-		departments = Department.objects.filter(campus = self.college.campus)
+		departments = Department.objects.filter(college__campus = self.college.campus)
 		all_medians = []
 		for d in departments:
 			all_medians.append(d.median_salary)
@@ -359,6 +360,7 @@ class Mug(models.Model):
 	image = models.FileField(upload_to = 'img/mugs')
 	def __unicode__(self):
 		return "Mug for %s" %(self.identity)
+
 class Employee(models.Model):
 	#there are some similar names...
 	identity = models.ForeignKey(EmployeeSuper)
@@ -373,11 +375,14 @@ class Employee(models.Model):
 	position_percentile = models.FloatField(blank = True, null = True)
 	college_percentile = models.FloatField(blank = True, null = True)
 	total_percentile = models.FloatField(blank = True, null = True)
+	employee_class_percentile = models.FloatField(blank = True, null = True)
 	department_position_percentile = models.FloatField(blank = True, null = True)
+	
 	college_position_percentile = models.FloatField(blank = True, null = True)
 	difference_from_college_median = models.FloatField(blank = True, null = True)
 	difference_from_dept_median= models.FloatField(blank = True, null = True)
 	has_tenure = models.BooleanField(default = False)
+	
 
 	# python manage.py shell
 	# import...
@@ -531,6 +536,17 @@ class Employee(models.Model):
 	def __unicode__(self):
 		return "%s %s (%s)" % (self.identity.first_name, self.identity.last_name, self.identity.middle,)
 
+class EmployeeClass(models.Model):
+	acronym = models.CharField(max_length = 3)
+	description = models.CharField(max_length = 60, null = True, blank = True)
+	
+def save(self, *args, **kwargs):
+	super(EmployeeClass, self).save(*args, **kwargs)
+
+	def __unicode__(self):
+		return self.acronym
+
+
 class EmployeeDetail(models.Model):
 	identity = models.ForeignKey(Employee)
 	position = models.ForeignKey(Position)
@@ -539,13 +555,17 @@ class EmployeeDetail(models.Model):
 	department = models.ForeignKey(Department)
 
 	employee_class = models.CharField(max_length = 5, null = True, blank = True)
+	employee_class_key = models.ForeignKey(EmployeeClass, null=True)
 	tenure = models.CharField(max_length = 5, blank = True)
 	present_FTE = models.FloatField(default = 0)
 	proposed_FTE = models.FloatField(default = 0)
 
+	is_non_GB = models.BooleanField(default = False)
+	
 	present_salary = models.FloatField(default = 0)
 	proposed_salary = models.FloatField(default = 0)
 	is_primary = models.NullBooleanField(null=True, blank = True)
+	
 	def __unicode__(self):
 		return self.identity.identity.name
 		
@@ -554,11 +574,14 @@ class EmployeeDetail(models.Model):
 	
 	def save_differences(self):
 		if self.is_primary:
-			college_difference = self.identity.proposed_total_salary - self.college.median_salary
-			self.identity.difference_from_college_median = college_difference
 
-			dept_difference = self.identity.proposed_total_salary - self.department.median_salary
-			self.identity.difference_from_dept_median = dept_difference
+			if self.college.median_salary is not None:
+				college_difference = self.identity.proposed_total_salary - self.college.median_salary
+				self.identity.difference_from_college_median = college_difference
+
+			if self.department.median_salary is not None:
+				dept_difference = self.identity.proposed_total_salary - self.department.median_salary
+				self.identity.difference_from_dept_median = dept_difference
 
 			self.identity.save()
 

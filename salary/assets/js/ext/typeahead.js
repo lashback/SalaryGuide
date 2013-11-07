@@ -858,7 +858,7 @@
         var html = {
             wrapper: '<span class="twitter-typeahead"></span>',
             hint: '<input class="tt-hint" type="text" autocomplete="off" spellcheck="off" disabled>',
-            dropdown: '<span class="tt-dropdown-menu"></span>'
+            dropdown: '<span class="tt-dropdown-menu pagination-centered"><h4>Select an employee to continue</h4></span>'
         }, css = {
             wrapper: {
                 position: "relative",
@@ -874,7 +874,7 @@
             query: {
                 position: "relative",
                 verticalAlign: "top",
-                backgroundColor: "transparent"
+                backgroundColor: "#fff"
             },
             dropdown: {
                 position: "absolute",

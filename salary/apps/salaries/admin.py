@@ -10,12 +10,16 @@ class EmployeeAdmin(admin.ModelAdmin):
 class EmployeeDetailAdmin(admin.ModelAdmin):
 	list_display = ['__unicode__', 'position', 'college', 'proposed_salary']
 	search_fields = ['identity__identity__name']
+	list_filter = ('is_primary', 'identity__year', 'is_non_GB')
 
 
 class CollegeAdmin(admin.ModelAdmin):
 	list_display=['name', 'campus', 'total_budget']
 	list_filter = ('campus',)
 
+class EmployeeClassAdmin(admin.ModelAdmin):
+	list_display = ['acronym', 'description']
+	list_filter = ('description',)
 
 class DepartmentAdmin(admin.ModelAdmin):
 	list_display=['name', 'college', 'total_budget']
@@ -33,6 +37,7 @@ class MugAdmin(admin.ModelAdmin):
 	
 
 admin.site.register(Mug, MugAdmin)
+admin.site.register(EmployeeClass, EmployeeClassAdmin)
 admin.site.register(EmployeeSuper, EmployeeSuperAdmin)
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(College, CollegeAdmin)

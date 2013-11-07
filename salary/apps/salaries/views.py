@@ -75,7 +75,7 @@ def bubbles(request):
 
 
 def autocomplete(request):
-	sqs = SearchQuerySet().autocomplete(content_auto=request.GET.get('q', ''))[:5]
+	sqs = SearchQuerySet().autocomplete(content_auto=request.GET.get('q', ''))[:10]
 	##### Return these fuckers with keys #####
 	#suggestions = []
 
@@ -90,8 +90,8 @@ def autocomplete(request):
 		data.append({
 			'name': str(result.full_name), 
 			'id': result.object.id,
-			'position': primary.position.title
-		#	'position': 
+			'position': primary.position.title,
+			'campus': primary.college.campus.name
 			}
 			)
 
